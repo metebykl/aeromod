@@ -1,4 +1,4 @@
-module github.com/fly2z/aeromod
+module github.com/metebykl/aeromod
 
 go 1.22.6
 

@@ -8,9 +8,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/fly2z/aeromod/internal/config"
-	"github.com/fly2z/aeromod/internal/msfs"
-	"github.com/fly2z/aeromod/utils"
+	"github.com/metebykl/aeromod/internal/config"
+	"github.com/metebykl/aeromod/internal/msfs"
+	"github.com/metebykl/aeromod/utils"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

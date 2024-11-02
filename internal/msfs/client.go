@@ -8,7 +8,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/fly2z/aeromod/utils"
+	"github.com/metebykl/aeromod/utils"
 )
 
 type Client struct {

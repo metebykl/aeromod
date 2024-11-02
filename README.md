@@ -75,7 +75,7 @@ AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods
 ### Installation
 
 ```bash
-git clone https://github.com/fly2z/aeromod.git
+git clone https://github.com/metebykl/aeromod.git
 cd aeromod
 wails dev
 ```
