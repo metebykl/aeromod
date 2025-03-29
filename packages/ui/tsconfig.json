@@ -1,0 +1,4 @@
+{
+  "extends": "@aeromod/typescript-config/react-lib.json",
+  "include": ["src"]
+}
