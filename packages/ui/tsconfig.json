@@ -1,4 +1,10 @@
 {
   "extends": "@aeromod/typescript-config/react-lib.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@ui/*": ["./src/*"]
+    }
+  },
   "include": ["src"]
 }

@@ -3,18 +3,33 @@
   "version": "0.0.0",
   "private": true,
   "exports": {
-    "./button": "./src/button.tsx"
+    "./components/*": "./src/components/*.tsx",
+    "./hooks/*": [
+      "./src/hooks/*.ts",
+      "./src/hooks/*.tsx"
+    ],
+    "./lib/*": "./src/lib/*.ts",
+    "./styles.css": "./src/styles.css"
   },
   "scripts": {
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
-    "@types/react": ">=18",
-    "@types/react-dom": ">=18",
     "react": ">=18",
     "react-dom": ">=18"
   },
+  "dependencies": {
+    "@radix-ui/react-slot": "^1.1.2",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^0.485.0",
+    "tailwind-merge": "^3.0.2",
+    "tw-animate-css": "^1.2.5"
+  },
   "devDependencies": {
-    "@aeromod/typescript-config": "workspace:*"
+    "@aeromod/typescript-config": "workspace:*",
+    "tailwindcss": "^4.0.17"
   }
 }

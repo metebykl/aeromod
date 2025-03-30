@@ -1,5 +1,5 @@
-import { Button } from "@aeromod/ui/button";
+import { Button } from "@aeromod/ui/components/button";
 
 export default function App() {
-  return <Button />;
+  return <Button>Submit</Button>;
 }
