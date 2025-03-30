@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "aeromod",
+  "productName": "AeroMod",
   "version": "0.1.0",
   "identifier": "com.aeromod.app",
   "build": {
@@ -12,9 +12,11 @@
   "app": {
     "windows": [
       {
-        "title": "aeromod",
-        "width": 800,
-        "height": 600
+        "title": "AeroMod",
+        "width": 1280,
+        "height": 720,
+        "minWidth": 800,
+        "minHeight": 450
       }
     ],
     "security": {
