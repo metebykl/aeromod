@@ -13,3 +13,7 @@ export interface Addon {
 export const getAddons = (): Promise<Addon[]> => {
   return invoke("get_addons");
 };
+
+export const installAddon = (): Promise<boolean> => {
+  return invoke("install_addon");
+};

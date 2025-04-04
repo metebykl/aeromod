@@ -1,7 +1,8 @@
+use std::ffi::OsStr;
 use std::fs;
 use std::path::Path;
 
-use anyhow::{Result, anyhow};
+use anyhow::{Context, Result, anyhow};
 use serde::{Deserialize, Serialize};
 
 use crate::common::manifest;
@@ -63,4 +64,45 @@ pub fn get_addons(settings: &AppSettings) -> Result<Vec<Addon>> {
   }
 
   Ok(addons)
+}
+
+pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
+  if !src.exists() {
+    return Err(anyhow!("Directory '{}' does not exist", src.display()));
+  }
+
+  // TODO: extract archives
+  if !src.is_dir() {
+    match src.extension().and_then(OsStr::to_str) {
+      Some("zip") => {
+        return Err(anyhow!("ZIP installation not yet implemented"));
+      }
+      Some("rar") => {
+        return Err(anyhow!("RAR installation not yet implemented"));
+      }
+      _ => {
+        return Err(anyhow!("Path '{}' is not a directory", src.display()));
+      }
+    }
+  }
+
+  let manifest_path = src.join("manifest.json");
+  if !manifest_path.exists() {
+    return Err(anyhow!("No manifest.json found in '{}'", src.display()));
+  }
+
+  let id = src.file_name().context("Failed to get file name")?;
+
+  let dst = Path::new(&settings.addons_dir).join(id);
+  if dst.exists() {
+    return Err(anyhow!(
+      "Addon '{}' already exists in the addons directory",
+      id.to_string_lossy()
+    ));
+  }
+
+  utils::copy_dir_all(src, &dst).context("Failed to copy addon files")?;
+
+  let id = id.to_str().context("Failed to convert id to string")?;
+  Ok(id.to_string())
 }

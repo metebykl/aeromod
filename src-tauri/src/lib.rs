@@ -29,9 +29,13 @@ pub fn run() {
 
       Ok(())
     })
-    .plugin(tauri_plugin_opener::init());
+    .plugin(tauri_plugin_opener::init())
+    .plugin(tauri_plugin_dialog::init());
 
-  let app = builder.invoke_handler(tauri::generate_handler![app::get_addons]);
+  let app = builder.invoke_handler(tauri::generate_handler![
+    app::get_addons,
+    app::install_addon
+  ]);
   app
     .run(tauri::generate_context!())
     .expect("error while running tauri application");

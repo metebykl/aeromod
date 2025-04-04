@@ -1,13 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Loader2 } from "lucide-react";
-import { useGetAddons } from "@/hooks/use-get-addons";
+import { DownloadIcon, Loader2 } from "lucide-react";
+import { Button } from "@aeromod/ui/components/button";
+import { useGetAddons, useInstallAddon } from "@/hooks/addon";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
 function Index() {
-  const { data: addons, isLoading: isLoadingAddons } = useGetAddons();
+  const {
+    data: addons,
+    isLoading: isLoadingAddons,
+    refetch: refetchAddons,
+  } = useGetAddons();
+
+  const installMutation = useInstallAddon({
+    onSuccess: (done) => {
+      if (done) {
+        refetchAddons();
+      }
+    },
+  });
 
   if (isLoadingAddons) {
     return (
@@ -27,7 +40,17 @@ function Index() {
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Addons</h1>
         {/* TODO: search bar */}
-        {/* TODO: install button */}
+        <Button
+          onClick={() => installMutation.mutate()}
+          disabled={installMutation.isPending}
+        >
+          {installMutation.isPending ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <DownloadIcon className="size-4" />
+          )}
+          {installMutation.isPending ? "Installing..." : "Install"}
+        </Button>
       </div>
       <div className="flex flex-col gap-y-2 overflow-y-auto">
         {addons?.map((addon) => (
