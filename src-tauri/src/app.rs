@@ -1,8 +1,9 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_opener::OpenerExt;
 
 use crate::common::addon;
 use crate::settings::AppSettings;
@@ -58,6 +59,24 @@ pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(
 pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
   let state = state.lock().unwrap();
   addon::uninstall_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}
+
+#[tauri::command]
+pub fn reveal_addon(app_handle: AppHandle, id: &str) -> Result<(), String> {
+  let state = app_handle.state::<Mutex<AppSettings>>();
+  let settings = state.lock().unwrap();
+
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(format!("Addon '{}' not found in addons directory", id));
+  }
+
+  app_handle
+    .opener()
+    .open_path(addon_path.to_string_lossy(), None::<&str>)
+    .map_err(|e| e.to_string())?;
 
   Ok(())
 }

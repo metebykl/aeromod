@@ -8,6 +8,7 @@ import {
   RefreshCcwIcon,
   Trash2Icon,
 } from "lucide-react";
+
 import { Button } from "@aeromod/ui/components/button";
 import { Checkbox } from "@aeromod/ui/components/checkbox";
 import {
@@ -17,6 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "@aeromod/ui/components/dropdown-menu";
 import { Input } from "@aeromod/ui/components/input";
+import { revealAddon } from "@/api/addon";
 import {
   useDisableAddon,
   useEnableAddon,
@@ -125,8 +127,10 @@ function Index() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48">
-                {/* TODO: reveal addon in explorer */}
-                <DropdownMenuItem className="cursor-pointer gap-x-2">
+                <DropdownMenuItem
+                  onSelect={() => revealAddon(addon.id)}
+                  className="cursor-pointer gap-x-2"
+                >
                   <FolderSymlinkIcon />
                   <span>Open</span>
                 </DropdownMenuItem>
