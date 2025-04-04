@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@aeromod/ui": "workspace:*",
+    "@tanstack/react-query": "^5.71.5",
     "@tanstack/react-router": "^1.114.29",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",

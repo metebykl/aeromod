@@ -5,6 +5,7 @@ import {
   createMemoryHistory,
   createRouter,
 } from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "./components/theme-provider";
 import { routeTree } from "./routeTree.gen";
 
@@ -15,6 +16,8 @@ const memoryHistory = createMemoryHistory({
 });
 
 const router = createRouter({ routeTree, history: memoryHistory });
+
+const queryClient = new QueryClient();
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -28,7 +31,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <ThemeProvider defaultTheme="dark">
-        <RouterProvider router={router} />
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
       </ThemeProvider>
     </StrictMode>
   );

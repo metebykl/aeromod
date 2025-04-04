@@ -1,13 +1,3 @@
-export interface Addon {
-  id: string;
-  name: string;
-  creator: string;
-  version: string;
-  content_type: string;
-  enables: boolean;
-  size: number;
-}
-
 export interface Manifest {
   title: string;
   content_type: string;

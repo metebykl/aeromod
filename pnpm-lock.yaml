@@ -29,6 +29,9 @@ importers:
       '@aeromod/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@tanstack/react-query':
+        specifier: ^5.71.5
+        version: 5.71.5(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.114.29
         version: 1.114.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -588,6 +591,14 @@ packages:
   '@tanstack/history@1.114.29':
     resolution: {integrity: sha512-OTRMhwidScQSA0xsc5OCtm3K/oAChe47jy1e4OY3VpXUnKrI7C8iwfQ9XDRdpdsRASH2xi6P5I0+7ksFBehaQQ==}
     engines: {node: '>=12'}
+
+  '@tanstack/query-core@5.71.5':
+    resolution: {integrity: sha512-XOQ5SyjCdwhxyLksGKWSL5poqyEXYPDnsrZAzJm2LgrMm4Yh6VOrfC+IFosXreDw9HNqC11YAMY3HlfHjNzuaA==}
+
+  '@tanstack/react-query@5.71.5':
+    resolution: {integrity: sha512-WpxZWy4fDASjY+iAaXB+aY+LC95PQ34W6EWVkjJ0hdzWWbczFnr9nHvHkVDpwdR18I1NO8igNGQJFrLrgyzI8Q==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@tanstack/react-router@1.114.29':
     resolution: {integrity: sha512-5nNWQoVKP+HIuhIZImSwid5pdSFE/Ge8XEX068U/1SaivEX4of0DCyOh1qKsswelmBVvqHFmtY6/GN/8dVLrHw==}
@@ -1587,6 +1598,13 @@ snapshots:
       vite: 6.2.3(@types/node@22.13.14)(jiti@2.4.2)(lightningcss@1.29.2)(tsx@4.19.3)
 
   '@tanstack/history@1.114.29': {}
+
+  '@tanstack/query-core@5.71.5': {}
+
+  '@tanstack/react-query@5.71.5(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.71.5
+      react: 18.3.1
 
   '@tanstack/react-router@1.114.29(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:

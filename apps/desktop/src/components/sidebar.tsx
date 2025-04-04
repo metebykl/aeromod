@@ -34,10 +34,15 @@ export function Sidebar() {
         ))}
       </nav>
       <div className="flex flex-col items-center gap-y-3">
-        <Button variant="ghost" size="icon" onClick={() => openUrl(GITHUB_URL)}>
+        <Button
+          className="group size-10 rounded-sm"
+          variant="ghost"
+          size="icon"
+          onClick={() => openUrl(GITHUB_URL)}
+        >
           <svg
             role="img"
-            className="fill-muted-foreground size-6"
+            className="group-hover:fill-foreground fill-muted-foreground size-6 transition-colors"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
