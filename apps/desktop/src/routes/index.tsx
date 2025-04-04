@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   DownloadIcon,
   FolderSymlinkIcon,
@@ -61,7 +61,7 @@ function Index() {
   }
 
   return (
-    <div className="flex h-full flex-col gap-y-4 p-4">
+    <div className="flex h-full flex-col gap-y-6 p-4">
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Addons</h1>
         {/* TODO: search bar */}
@@ -93,12 +93,18 @@ function Index() {
                     : disableMutation.mutate(addon.id);
                 }}
               />
-              {addon.id}
+              <Link
+                to="/addons/$addonId"
+                params={{ addonId: addon.id }}
+                className="underline"
+              >
+                {addon.id}
+              </Link>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Button variant="outline" size="icon">
-                  <MoreHorizontalIcon className="size-5" />
+                  <MoreHorizontalIcon />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-48">

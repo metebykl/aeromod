@@ -8,6 +8,14 @@ use crate::common::addon;
 use crate::settings::AppSettings;
 
 #[tauri::command]
+pub fn get_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<addon::Addon, String> {
+  let state = state.lock().unwrap();
+  let addons = addon::parse_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(addons)
+}
+
+#[tauri::command]
 pub fn get_addons(state: State<'_, Mutex<AppSettings>>) -> Result<Vec<addon::Addon>, String> {
   let state = state.lock().unwrap();
   let addons = addon::get_addons(&state).map_err(|e| e.to_string())?;

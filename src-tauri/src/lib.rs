@@ -31,6 +31,7 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init());
 
   let app = builder.invoke_handler(tauri::generate_handler![
+    app::get_addon,
     app::get_addons,
     app::install_addon,
     app::enable_addon,

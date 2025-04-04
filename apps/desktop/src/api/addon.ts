@@ -10,6 +10,10 @@ export interface Addon {
   size: number;
 }
 
+export const getAddon = (id: string): Promise<Addon> => {
+  return invoke("get_addon", { id });
+};
+
 export const getAddons = (): Promise<Addon[]> => {
   return invoke("get_addons");
 };

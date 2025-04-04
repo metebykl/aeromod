@@ -14,6 +14,7 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as VerifyImport } from './routes/verify'
 import { Route as SettingsImport } from './routes/settings'
 import { Route as IndexImport } from './routes/index'
+import { Route as AddonsAddonIdImport } from './routes/addons/$addonId'
 
 // Create/Update Routes
 
@@ -32,6 +33,12 @@ const SettingsRoute = SettingsImport.update({
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AddonsAddonIdRoute = AddonsAddonIdImport.update({
+  id: '/addons/$addonId',
+  path: '/addons/$addonId',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyImport
       parentRoute: typeof rootRoute
     }
+    '/addons/$addonId': {
+      id: '/addons/$addonId'
+      path: '/addons/$addonId'
+      fullPath: '/addons/$addonId'
+      preLoaderRoute: typeof AddonsAddonIdImport
+      parentRoute: typeof rootRoute
+    }
   }
 }
 
@@ -69,12 +83,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/verify': typeof VerifyRoute
+  '/addons/$addonId': typeof AddonsAddonIdRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/verify': typeof VerifyRoute
+  '/addons/$addonId': typeof AddonsAddonIdRoute
 }
 
 export interface FileRoutesById {
@@ -82,14 +98,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/settings': typeof SettingsRoute
   '/verify': typeof VerifyRoute
+  '/addons/$addonId': typeof AddonsAddonIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/verify'
+  fullPaths: '/' | '/settings' | '/verify' | '/addons/$addonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/verify'
-  id: '__root__' | '/' | '/settings' | '/verify'
+  to: '/' | '/settings' | '/verify' | '/addons/$addonId'
+  id: '__root__' | '/' | '/settings' | '/verify' | '/addons/$addonId'
   fileRoutesById: FileRoutesById
 }
 
@@ -97,12 +114,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsRoute: typeof SettingsRoute
   VerifyRoute: typeof VerifyRoute
+  AddonsAddonIdRoute: typeof AddonsAddonIdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsRoute: SettingsRoute,
   VerifyRoute: VerifyRoute,
+  AddonsAddonIdRoute: AddonsAddonIdRoute,
 }
 
 export const routeTree = rootRoute
@@ -117,7 +136,8 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/settings",
-        "/verify"
+        "/verify",
+        "/addons/$addonId"
       ]
     },
     "/": {
@@ -128,6 +148,9 @@ export const routeTree = rootRoute
     },
     "/verify": {
       "filePath": "verify.tsx"
+    },
+    "/addons/$addonId": {
+      "filePath": "addons/$addonId.tsx"
     }
   }
 }

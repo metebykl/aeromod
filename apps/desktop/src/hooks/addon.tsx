@@ -6,10 +6,15 @@ import {
 import {
   disableAddon,
   enableAddon,
+  getAddon,
   getAddons,
   installAddon,
   uninstallAddon,
 } from "@/api/addon";
+
+export const useGetAddon = (id: string) => {
+  return useQuery({ queryKey: ["getAddon", id], queryFn: () => getAddon(id) });
+};
 
 export const useGetAddons = () => {
   return useQuery({ queryKey: ["getAddons"], queryFn: getAddons });
