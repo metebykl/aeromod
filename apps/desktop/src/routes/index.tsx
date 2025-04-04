@@ -121,7 +121,7 @@ function Index() {
               </Link>
             </div>
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                   <MoreHorizontalIcon />
                 </Button>
