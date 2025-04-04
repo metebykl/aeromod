@@ -34,7 +34,9 @@ pub fn run() {
 
   let app = builder.invoke_handler(tauri::generate_handler![
     app::get_addons,
-    app::install_addon
+    app::install_addon,
+    app::enable_addon,
+    app::disable_addon
   ]);
   app
     .run(tauri::generate_context!())

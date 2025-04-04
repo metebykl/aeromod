@@ -27,3 +27,19 @@ pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
   addon::install_addon(&settings, &addon_path).map_err(|e| e.to_string())?;
   Ok(true)
 }
+
+#[tauri::command]
+pub fn enable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
+  let state = state.lock().unwrap();
+  addon::enable_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}
+
+#[tauri::command]
+pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
+  let state = state.lock().unwrap();
+  addon::disable_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}

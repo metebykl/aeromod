@@ -22,6 +22,7 @@ name = "aeromod"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "junction",
  "serde",
  "serde_json",
  "tauri",
@@ -1883,6 +1884,16 @@ checksum = "5dea2b27dd239b2556ed7a25ba842fe47fd602e7fc7433c2a8d6106d4d9edd70"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "junction"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72bbdfd737a243da3dfc1f99ee8d6e166480f17ab4ac84d7c34aacd73fc7bd16"
+dependencies = [
+ "scopeguard",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]

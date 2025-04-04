@@ -39,3 +39,27 @@ pub fn copy_dir_all<P: AsRef<Path>, U: AsRef<Path>>(from: P, to: U) -> io::Resul
 
   Ok(())
 }
+
+#[cfg(unix)]
+pub fn symlink_dir<P: AsRef<Path>, U: AsRef<Path>>(from: P, to: U) -> io::Result<()> {
+  std::os::unix::fs::symlink(from, to)?;
+  Ok(())
+}
+
+#[cfg(windows)]
+pub fn symlink_dir<P: AsRef<Path>, U: AsRef<Path>>(from: P, to: U) -> io::Result<()> {
+  junction::create(from, to)?;
+  Ok(())
+}
+
+#[cfg(unix)]
+pub fn remove_symlink_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
+  fs::remove_file(path)?;
+  Ok(())
+}
+
+#[cfg(windows)]
+pub fn remove_symlink_dir<P: AsRef<Path>>(path: P) -> std::io::Result<()> {
+  fs::remove_dir(path)?;
+  Ok(())
+}

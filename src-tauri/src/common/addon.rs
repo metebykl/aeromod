@@ -106,3 +106,39 @@ pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
   let id = id.to_str().context("Failed to convert id to string")?;
   Ok(id.to_string())
 }
+
+pub fn enable_addon(settings: &AppSettings, id: &str) -> Result<()> {
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  let target_path = Path::new(&settings.community_dir).join(id);
+  if target_path.exists() {
+    return Err(anyhow!(
+      "Addon '{}' is already enabled or a file with that name exists in the community folder",
+      id
+    ));
+  }
+
+  utils::symlink_dir(addon_path, target_path).context("Failed to create symlink")?;
+  Ok(())
+}
+
+pub fn disable_addon(settings: &AppSettings, id: &str) -> Result<()> {
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  let target_path = Path::new(&settings.community_dir).join(id);
+  if !target_path.exists() {
+    return Err(anyhow!(
+      "Addon '{}' is not enabled or does not exist in the community folder",
+      id
+    ));
+  }
+
+  utils::remove_symlink_dir(target_path).context("Failed to remove symlink")?;
+  Ok(())
+}

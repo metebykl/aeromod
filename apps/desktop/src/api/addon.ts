@@ -6,7 +6,7 @@ export interface Addon {
   creator: string;
   version: string;
   content_type: string;
-  enables: boolean;
+  enabled: boolean;
   size: number;
 }
 
@@ -16,4 +16,12 @@ export const getAddons = (): Promise<Addon[]> => {
 
 export const installAddon = (): Promise<boolean> => {
   return invoke("install_addon");
+};
+
+export const enableAddon = (id: string): Promise<void> => {
+  return invoke("enable_addon", { id });
+};
+
+export const disableAddon = (id: string): Promise<void> => {
+  return invoke("disable_addon", { id });
 };

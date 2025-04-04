@@ -1,7 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DownloadIcon, Loader2 } from "lucide-react";
 import { Button } from "@aeromod/ui/components/button";
-import { useGetAddons, useInstallAddon } from "@/hooks/addon";
+import { Checkbox } from "@aeromod/ui/components/checkbox";
+import {
+  useDisableAddon,
+  useEnableAddon,
+  useGetAddons,
+  useInstallAddon,
+} from "@/hooks/addon";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -21,6 +27,9 @@ function Index() {
       }
     },
   });
+
+  const enableMutation = useEnableAddon({ onSuccess: () => refetchAddons() });
+  const disableMutation = useDisableAddon({ onSuccess: () => refetchAddons() });
 
   if (isLoadingAddons) {
     return (
@@ -58,7 +67,18 @@ function Index() {
             key={addon.id}
             className="bg-muted flex items-center justify-between rounded-md border px-4 py-3"
           >
-            {addon.id}
+            <div className="flex items-center gap-x-2">
+              <Checkbox
+                checked={addon.enabled}
+                onCheckedChange={(value) => {
+                  if (value === "indeterminate") return;
+                  value
+                    ? enableMutation.mutate(addon.id)
+                    : disableMutation.mutate(addon.id);
+                }}
+              />
+              {addon.id}
+            </div>
           </div>
         ))}
       </div>
