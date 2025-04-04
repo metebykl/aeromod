@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Mutex;
 
 use tauri::{AppHandle, Manager, State};
@@ -24,6 +25,7 @@ pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
     None => return Ok(false),
   };
 
+  // TODO: enable addon after install if auto_enable is true
   addon::install_addon(&settings, &addon_path).map_err(|e| e.to_string())?;
   Ok(true)
 }
@@ -48,6 +50,54 @@ pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(
 pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
   let state = state.lock().unwrap();
   addon::uninstall_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}
+
+#[tauri::command]
+pub fn get_settings(state: State<'_, Mutex<AppSettings>>) -> Result<AppSettings, String> {
+  let settings = state.lock().unwrap().clone();
+  Ok(settings)
+}
+
+#[tauri::command]
+pub fn update_setting(app_handle: AppHandle, key: &str, value: &str) -> Result<(), String> {
+  let state = app_handle.state::<Mutex<AppSettings>>();
+  let mut settings = state.lock().unwrap();
+
+  match key {
+    "addons_dir" => {
+      let path = PathBuf::from(value);
+      if !path.exists() {
+        return Err(format!("Path '{}' does not exist", value));
+      }
+      if !path.is_dir() {
+        return Err(format!("Path '{}' is not a directory", value));
+      }
+      settings.addons_dir = path;
+    }
+    "community_dir" => {
+      let path = PathBuf::from(value);
+      if !path.exists() {
+        return Err(format!("Path '{}' does not exist", value));
+      }
+      if !path.is_dir() {
+        return Err(format!("Path '{}' is not a directory", value));
+      }
+      settings.community_dir = path;
+    }
+    "auto_enable" => {
+      settings.auto_enable = match value {
+        "true" => true,
+        "false" => false,
+        _ => return Err(format!("Invalid value for auto_enable '{}'", value)),
+      };
+    }
+    _ => return Err(format!("Unknown setting key '{}'", key)),
+  }
+
+  let settings_path = AppSettings::path(&app_handle).map_err(|e| e.to_string())?;
+  settings.save(settings_path).map_err(|e| e.to_string())?;
 
   Ok(())
 }

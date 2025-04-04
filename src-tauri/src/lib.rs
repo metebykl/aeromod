@@ -14,17 +14,15 @@ mod utils;
 pub fn run() {
   let builder = tauri::Builder::default()
     .setup(|app| {
-      let paths = app.path();
+      let app_handle = app.app_handle();
 
-      let config_dir = paths
-        .config_dir()
-        .expect("missing config dir")
-        .join("AeroMod");
+      let config_dir = AppSettings::config_dir(app_handle).expect("missing config dir");
       fs::create_dir_all(&config_dir).expect("failed to create config dir");
 
       // TODO: implement onboarding logic
-      let settings =
-        AppSettings::load(config_dir.join("settings.json")).expect("failed to load settings");
+      let settings_path = AppSettings::path(app_handle).unwrap();
+      let settings = AppSettings::load(settings_path).expect("failed to load settings");
+
       app.manage(Mutex::new(settings));
 
       Ok(())
@@ -37,7 +35,9 @@ pub fn run() {
     app::install_addon,
     app::enable_addon,
     app::disable_addon,
-    app::uninstall_addon
+    app::uninstall_addon,
+    app::get_settings,
+    app::update_setting
   ]);
   app
     .run(tauri::generate_context!())
