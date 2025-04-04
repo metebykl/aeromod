@@ -23,7 +23,7 @@ export function Sidebar() {
           <Button
             variant="ghost"
             size="icon"
-            className="[&.active]:bg-accent [&.active]:text-foreground text-muted-foreground size-10 rounded-sm bg-transparent"
+            className="[&.active]:bg-accent [&.active]:text-foreground text-muted-foreground size-10 bg-transparent"
             asChild
           >
             <Link to={r.href}>
@@ -34,7 +34,7 @@ export function Sidebar() {
       </nav>
       <div className="flex flex-col items-center gap-y-3">
         <Button
-          className="group size-10 rounded-sm"
+          className="group size-10"
           variant="ghost"
           size="icon"
           onClick={() => openUrl(GITHUB_URL)}
@@ -52,7 +52,7 @@ export function Sidebar() {
         <Button
           variant="ghost"
           size="icon"
-          className="[&.active]:bg-accent [&.active]:text-foreground text-muted-foreground size-10 rounded-sm bg-transparent"
+          className="[&.active]:bg-accent [&.active]:text-foreground text-muted-foreground size-10 bg-transparent"
           asChild
         >
           <Link to="/settings">
