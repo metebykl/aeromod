@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@ui/*": ["./src/*"]
+      "@aeromod/ui/*": ["./src/*"]
     }
   },
   "include": ["src"]

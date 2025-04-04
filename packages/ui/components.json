@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@ui/components",
-    "utils": "@ui/lib/utils",
-    "hooks": "@ui/hooks",
-    "lib": "@ui/lib",
-    "ui": "@ui/components"
+    "components": "@aeromod/ui/components",
+    "utils": "@aeromod/ui/lib/utils",
+    "hooks": "@aeromod/ui/hooks",
+    "lib": "@aeromod/ui/lib",
+    "ui": "@aeromod/ui/components"
   }
 }
