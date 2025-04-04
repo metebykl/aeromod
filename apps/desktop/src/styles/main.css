@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "@aeromod/ui/styles.css";
 
+@font-face {
+  font-family: "Inter";
+  src: url("../assets/fonts/Inter-VariableFont.ttf") format("truetype");
+}
+
+@theme {
+  --font-inter: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply font-inter;
+  }
+}
+
 /**
  * Tailwind CSS official document:
  * https://tailwindcss.com/docs/detecting-classes-in-source-files
