@@ -21,6 +21,7 @@ export function Sidebar() {
       <nav className="flex flex-col items-center gap-y-3">
         {routes.map((r) => (
           <Button
+            key={r.href}
             variant="ghost"
             size="icon"
             className="[&.active]:bg-accent [&.active]:text-foreground text-muted-foreground size-10 bg-transparent"
