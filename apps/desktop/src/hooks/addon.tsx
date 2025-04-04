@@ -8,6 +8,7 @@ import {
   enableAddon,
   getAddons,
   installAddon,
+  uninstallAddon,
 } from "@/api/addon";
 
 export const useGetAddons = () => {
@@ -28,4 +29,10 @@ export const useDisableAddon = (
   options?: MutateOptions<void, Error, string, unknown>
 ) => {
   return useMutation({ mutationFn: disableAddon, ...options });
+};
+
+export const useUninstallAddon = (
+  options?: MutateOptions<void, Error, string, unknown>
+) => {
+  return useMutation({ mutationFn: uninstallAddon, ...options });
 };

@@ -1,12 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DownloadIcon, Loader2 } from "lucide-react";
+import {
+  DownloadIcon,
+  FolderSymlinkIcon,
+  Loader2,
+  MoreHorizontalIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { Button } from "@aeromod/ui/components/button";
 import { Checkbox } from "@aeromod/ui/components/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@aeromod/ui/components/dropdown-menu";
 import {
   useDisableAddon,
   useEnableAddon,
   useGetAddons,
   useInstallAddon,
+  useUninstallAddon,
 } from "@/hooks/addon";
 
 export const Route = createFileRoute("/")({
@@ -30,6 +43,9 @@ function Index() {
 
   const enableMutation = useEnableAddon({ onSuccess: () => refetchAddons() });
   const disableMutation = useDisableAddon({ onSuccess: () => refetchAddons() });
+  const uninstallMutation = useUninstallAddon({
+    onSuccess: () => refetchAddons(),
+  });
 
   if (isLoadingAddons) {
     return (
@@ -65,7 +81,7 @@ function Index() {
         {addons?.map((addon) => (
           <div
             key={addon.id}
-            className="bg-muted flex items-center justify-between rounded-md border px-4 py-3"
+            className="bg-muted flex items-center justify-between rounded-md border px-4 py-2"
           >
             <div className="flex items-center gap-x-2">
               <Checkbox
@@ -79,6 +95,27 @@ function Index() {
               />
               {addon.id}
             </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Button variant="outline" size="icon">
+                  <MoreHorizontalIcon className="size-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-48">
+                {/* TODO: reveal addon in explorer */}
+                <DropdownMenuItem className="cursor-pointer gap-x-2">
+                  <FolderSymlinkIcon />
+                  <span>Open</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => uninstallMutation.mutate(addon.id)}
+                  className="cursor-pointer gap-x-2"
+                >
+                  <Trash2Icon />
+                  <span>Uninstall</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         ))}
       </div>

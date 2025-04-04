@@ -43,3 +43,11 @@ pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(
 
   Ok(())
 }
+
+#[tauri::command]
+pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
+  let state = state.lock().unwrap();
+  addon::uninstall_addon(&state, id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}

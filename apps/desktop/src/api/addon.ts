@@ -25,3 +25,7 @@ export const enableAddon = (id: string): Promise<void> => {
 export const disableAddon = (id: string): Promise<void> => {
   return invoke("disable_addon", { id });
 };
+
+export const uninstallAddon = (id: string): Promise<void> => {
+  return invoke("uninstall_addon", { id });
+};

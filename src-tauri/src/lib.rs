@@ -36,7 +36,8 @@ pub fn run() {
     app::get_addons,
     app::install_addon,
     app::enable_addon,
-    app::disable_addon
+    app::disable_addon,
+    app::uninstall_addon
   ]);
   app
     .run(tauri::generate_context!())

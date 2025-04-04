@@ -142,3 +142,19 @@ pub fn disable_addon(settings: &AppSettings, id: &str) -> Result<()> {
   utils::remove_symlink_dir(target_path).context("Failed to remove symlink")?;
   Ok(())
 }
+
+pub fn uninstall_addon(settings: &AppSettings, id: &str) -> Result<()> {
+  let addon = parse_addon(settings, id)?;
+  if addon.enabled {
+    disable_addon(settings, id)?;
+  }
+
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  fs::remove_dir_all(addon_path)?;
+
+  Ok(())
+}
