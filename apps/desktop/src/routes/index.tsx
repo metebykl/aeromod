@@ -1,9 +1,11 @@
+import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   DownloadIcon,
   FolderSymlinkIcon,
   Loader2,
   MoreHorizontalIcon,
+  RefreshCcwIcon,
   Trash2Icon,
 } from "lucide-react";
 import { Button } from "@aeromod/ui/components/button";
@@ -14,6 +16,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@aeromod/ui/components/dropdown-menu";
+import { Input } from "@aeromod/ui/components/input";
 import {
   useDisableAddon,
   useEnableAddon,
@@ -34,18 +37,22 @@ function Index() {
   } = useGetAddons();
 
   const installMutation = useInstallAddon({
-    onSuccess: (done) => {
-      if (done) {
-        refetchAddons();
-      }
-    },
+    onSuccess: (done) => done && refetchAddons(),
   });
-
-  const enableMutation = useEnableAddon({ onSuccess: () => refetchAddons() });
-  const disableMutation = useDisableAddon({ onSuccess: () => refetchAddons() });
   const uninstallMutation = useUninstallAddon({
     onSuccess: () => refetchAddons(),
   });
+  const enableMutation = useEnableAddon({ onSuccess: () => refetchAddons() });
+  const disableMutation = useDisableAddon({ onSuccess: () => refetchAddons() });
+
+  const [search, setSearch] = useState<string>("");
+  const filteredAddons = useMemo(
+    () =>
+      addons?.filter((a) =>
+        a.id.toLowerCase().trim().includes(search.toLowerCase().trim())
+      ),
+    [addons, search]
+  );
 
   if (isLoadingAddons) {
     return (
@@ -64,21 +71,31 @@ function Index() {
     <div className="flex h-full flex-col gap-y-6 p-4">
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Addons</h1>
-        {/* TODO: search bar */}
-        <Button
-          onClick={() => installMutation.mutate()}
-          disabled={installMutation.isPending}
-        >
-          {installMutation.isPending ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <DownloadIcon className="size-4" />
-          )}
-          {installMutation.isPending ? "Installing..." : "Install"}
-        </Button>
+        <div className="flex items-center gap-x-2">
+          <Button variant="ghost" size="icon" onClick={() => refetchAddons()}>
+            <RefreshCcwIcon />
+          </Button>
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-[300px]"
+            placeholder="Search addons..."
+          />
+          <Button
+            onClick={() => installMutation.mutate()}
+            disabled={installMutation.isPending}
+          >
+            {installMutation.isPending ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <DownloadIcon className="size-4" />
+            )}
+            {installMutation.isPending ? "Installing..." : "Install"}
+          </Button>
+        </div>
       </div>
       <div className="flex flex-col gap-y-2 overflow-y-auto">
-        {addons?.map((addon) => (
+        {filteredAddons?.map((addon) => (
           <div
             key={addon.id}
             className="bg-muted flex items-center justify-between rounded-md border px-4 py-2"
