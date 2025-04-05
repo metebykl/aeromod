@@ -60,8 +60,8 @@ function Settings() {
       <div className="flex flex-col gap-y-4">
         <div className="flex w-full items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium">Theme</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium">Theme</h3>
+            <p className="text-muted-foreground text-sm">
               Color scheme for the application interface.
             </p>
           </div>
@@ -69,8 +69,8 @@ function Settings() {
         </div>
         <div className="flex w-full items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium">Auto Enable</h3>
-            <p className="text-muted-foreground">
+            <h3 className="font-medium">Auto Enable</h3>
+            <p className="text-muted-foreground text-sm">
               Automatically enable addons after installation.
             </p>
           </div>
@@ -146,7 +146,7 @@ function SettingsItemPath({
 
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <h3 className="text-lg font-medium">{name}</h3>
+      <h3 className="font-medium">{name}</h3>
       <form onSubmit={onSubmit} className="flex items-center gap-x-2">
         <Input value={value} onChange={(e) => setValue(e.target.value)} />
         <Button
@@ -162,7 +162,7 @@ function SettingsItemPath({
           Save
         </Button>
       </form>
-      <p className="text-muted-foreground">{description}</p>
+      <p className="text-muted-foreground text-sm">{description}</p>
     </div>
   );
 }
