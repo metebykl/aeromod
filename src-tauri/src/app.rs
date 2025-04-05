@@ -64,6 +64,15 @@ pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result
 }
 
 #[tauri::command]
+pub fn verify_addon(
+  state: State<'_, Mutex<AppSettings>>,
+  id: &str,
+) -> Result<addon::VerificationResult, String> {
+  let state = state.lock().unwrap();
+  addon::verify_addon(&state, id).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
 pub fn reveal_addon(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let state = app_handle.state::<Mutex<AppSettings>>();
   let settings = state.lock().unwrap();

@@ -37,3 +37,18 @@ export const uninstallAddon = (id: string): Promise<void> => {
 export const revealAddon = (id: string): Promise<void> => {
   return invoke("reveal_addon", { id });
 };
+
+export interface VerificationResult {
+  verified: boolean;
+  files: VerificationNode[];
+}
+
+export interface VerificationNode {
+  status: "Ok" | "SizeMismatch" | "NotFound";
+  path: string;
+  size: number;
+}
+
+export const verifyAddon = (id: string): Promise<VerificationResult> => {
+  return invoke("verify_addon", { id });
+};

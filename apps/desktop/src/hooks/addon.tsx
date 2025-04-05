@@ -10,6 +10,8 @@ import {
   getAddons,
   installAddon,
   uninstallAddon,
+  type VerificationResult,
+  verifyAddon,
 } from "@/api/addon";
 
 export const useGetAddon = (id: string) => {
@@ -40,4 +42,10 @@ export const useUninstallAddon = (
   options?: MutateOptions<void, Error, string, unknown>
 ) => {
   return useMutation({ mutationFn: uninstallAddon, ...options });
+};
+
+export const useVerifyAddon = (
+  options?: MutateOptions<VerificationResult, Error, string, unknown>
+) => {
+  return useMutation({ mutationFn: verifyAddon, ...options });
 };

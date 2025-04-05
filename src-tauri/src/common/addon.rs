@@ -1,5 +1,6 @@
 use std::ffi::OsStr;
 use std::fs;
+use std::fs::File;
 use std::path::Path;
 
 use anyhow::{Context, Result, anyhow};
@@ -157,4 +158,85 @@ pub fn uninstall_addon(settings: &AppSettings, id: &str) -> Result<()> {
   fs::remove_dir_all(addon_path)?;
 
   Ok(())
+}
+
+#[derive(Serialize, Deserialize)]
+struct Layout {
+  content: Vec<LayoutContent>,
+}
+
+#[derive(Serialize, Deserialize)]
+struct LayoutContent {
+  path: String,
+  size: u64,
+  date: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct VerificationResult {
+  pub verified: bool,
+  pub files: Vec<VerificationNode>,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct VerificationNode {
+  pub status: VerificationStatus,
+  pub path: String,
+  pub size: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub enum VerificationStatus {
+  Ok,
+  SizeMismatch,
+  NotFound,
+}
+
+pub fn verify_addon(settings: &AppSettings, id: &str) -> Result<VerificationResult> {
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  let layout_path = addon_path.join("layout.json");
+  if !layout_path.exists() {
+    return Err(anyhow!("Addon '{}' does not have a layout.json file", id));
+  }
+
+  let file = File::open(layout_path)?;
+  let layout: Layout = serde_json::from_reader(file)?;
+
+  let mut verified = true;
+  let mut files: Vec<VerificationNode> = Vec::new();
+
+  for content in &layout.content {
+    let file_path = addon_path.join(&content.path);
+
+    match fs::metadata(file_path) {
+      Ok(metadata) => {
+        let status = if metadata.len() == content.size {
+          VerificationStatus::Ok
+        } else {
+          verified = false;
+          VerificationStatus::SizeMismatch
+        };
+
+        files.push(VerificationNode {
+          status,
+          path: content.path.clone(),
+          size: metadata.len(),
+        });
+      }
+      Err(_) => {
+        verified = false;
+        files.push(VerificationNode {
+          status: VerificationStatus::NotFound,
+          path: content.path.clone(),
+          size: content.size,
+        });
+      }
+    }
+  }
+
+  Ok(VerificationResult { verified, files })
 }
