@@ -100,9 +100,9 @@ function Index() {
         {filteredAddons?.map((addon) => (
           <div
             key={addon.id}
-            className="bg-muted flex items-center justify-between rounded-md border px-4 py-2"
+            className="bg-muted flex items-center justify-between rounded-md border px-4 py-1"
           >
-            <div className="flex items-center gap-x-2">
+            <div className="flex items-center gap-x-4">
               <Checkbox
                 checked={addon.enabled}
                 onCheckedChange={(value) => {
@@ -112,13 +112,21 @@ function Index() {
                     : disableMutation.mutate(addon.id);
                 }}
               />
-              <Link
-                to="/addons/$addonId"
-                params={{ addonId: addon.id }}
-                className="underline"
-              >
-                {addon.id}
-              </Link>
+              <div>
+                <Link
+                  to="/addons/$addonId"
+                  params={{ addonId: addon.id }}
+                  className="underline"
+                >
+                  {addon.id}
+                </Link>
+                <div className="flex items-center gap-x-2">
+                  <p className="text-muted-foreground text-sm">
+                    {addon.creator}
+                  </p>
+                  <p className="text-sm">v{addon.version}</p>
+                </div>
+              </div>
             </div>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
