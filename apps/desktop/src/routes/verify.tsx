@@ -43,7 +43,7 @@ function Verify() {
   return (
     <div className="flex h-full flex-col gap-y-6 p-4">
       <div className="flex w-full">
-        <h1 className="text-2xl font-semibold">Verify</h1>
+        <h1 className="text-2xl font-semibold">Verify Addons</h1>
       </div>
       <div className="flex w-full items-center gap-x-2">
         <Select value={selected} onValueChange={(v) => setSelected(v)}>

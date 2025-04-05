@@ -19,6 +19,7 @@ import {
 } from "@aeromod/ui/components/dropdown-menu";
 import { Input } from "@aeromod/ui/components/input";
 import { revealAddon } from "@/api/addon";
+import { Hint } from "@/components/hint";
 import {
   useDisableAddon,
   useEnableAddon,
@@ -74,9 +75,11 @@ function Index() {
       <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Addons</h1>
         <div className="flex items-center gap-x-2">
-          <Button variant="ghost" size="icon" onClick={() => refetchAddons()}>
-            <RefreshCcwIcon />
-          </Button>
+          <Hint label="Reload Addons">
+            <Button variant="ghost" size="icon" onClick={() => refetchAddons()}>
+              <RefreshCcwIcon />
+            </Button>
+          </Hint>
           <Input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
