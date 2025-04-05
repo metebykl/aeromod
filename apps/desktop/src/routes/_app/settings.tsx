@@ -9,7 +9,7 @@ import { Input } from "@aeromod/ui/components/input";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useGetSettings, useUpdateSetting } from "@/hooks/settings";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/_app/settings")({
   component: Settings,
 });
 

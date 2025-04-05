@@ -19,11 +19,13 @@ pub fn run() {
       let config_dir = AppSettings::config_dir(app_handle).expect("missing config dir");
       fs::create_dir_all(&config_dir).expect("failed to create config dir");
 
-      // TODO: implement onboarding logic
-      let settings_path = AppSettings::path(app_handle).unwrap();
-      let settings = AppSettings::load(settings_path).expect("failed to load settings");
+      let exists = AppSettings::exists(app_handle).unwrap();
+      if exists {
+        let settings_path = AppSettings::path(app_handle).unwrap();
+        let settings = AppSettings::load(settings_path).expect("failed to load settings");
 
-      app.manage(Mutex::new(settings));
+        app.manage(Mutex::new(settings));
+      }
 
       Ok(())
     })
@@ -31,6 +33,8 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init());
 
   let app = builder.invoke_handler(tauri::generate_handler![
+    app::get_onboarding_status,
+    app::complete_onboarding,
     app::get_addon,
     app::get_addons,
     app::install_addon,

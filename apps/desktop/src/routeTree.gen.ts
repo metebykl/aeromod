@@ -11,117 +11,174 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as VerifyImport } from './routes/verify'
-import { Route as SettingsImport } from './routes/settings'
-import { Route as IndexImport } from './routes/index'
-import { Route as AddonsAddonIdImport } from './routes/addons/$addonId'
+import { Route as OnboardingImport } from './routes/onboarding'
+import { Route as AppImport } from './routes/_app'
+import { Route as AppIndexImport } from './routes/_app/index'
+import { Route as AppVerifyImport } from './routes/_app/verify'
+import { Route as AppSettingsImport } from './routes/_app/settings'
+import { Route as AppAddonsAddonIdImport } from './routes/_app/addons/$addonId'
 
 // Create/Update Routes
 
-const VerifyRoute = VerifyImport.update({
-  id: '/verify',
-  path: '/verify',
+const OnboardingRoute = OnboardingImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRoute,
 } as any)
 
-const SettingsRoute = SettingsImport.update({
-  id: '/settings',
-  path: '/settings',
+const AppRoute = AppImport.update({
+  id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
+const AppIndexRoute = AppIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AppRoute,
 } as any)
 
-const AddonsAddonIdRoute = AddonsAddonIdImport.update({
+const AppVerifyRoute = AppVerifyImport.update({
+  id: '/verify',
+  path: '/verify',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppSettingsRoute = AppSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppAddonsAddonIdRoute = AppAddonsAddonIdImport.update({
   id: '/addons/$addonId',
   path: '/addons/$addonId',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AppRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
-    '/settings': {
-      id: '/settings'
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingImport
+      parentRoute: typeof rootRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
       path: '/settings'
       fullPath: '/settings'
-      preLoaderRoute: typeof SettingsImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppSettingsImport
+      parentRoute: typeof AppImport
     }
-    '/verify': {
-      id: '/verify'
+    '/_app/verify': {
+      id: '/_app/verify'
       path: '/verify'
       fullPath: '/verify'
-      preLoaderRoute: typeof VerifyImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppVerifyImport
+      parentRoute: typeof AppImport
     }
-    '/addons/$addonId': {
-      id: '/addons/$addonId'
+    '/_app/': {
+      id: '/_app/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AppIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/addons/$addonId': {
+      id: '/_app/addons/$addonId'
       path: '/addons/$addonId'
       fullPath: '/addons/$addonId'
-      preLoaderRoute: typeof AddonsAddonIdImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppAddonsAddonIdImport
+      parentRoute: typeof AppImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AppRouteChildren {
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppVerifyRoute: typeof AppVerifyRoute
+  AppIndexRoute: typeof AppIndexRoute
+  AppAddonsAddonIdRoute: typeof AppAddonsAddonIdRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppSettingsRoute: AppSettingsRoute,
+  AppVerifyRoute: AppVerifyRoute,
+  AppIndexRoute: AppIndexRoute,
+  AppAddonsAddonIdRoute: AppAddonsAddonIdRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRoute
-  '/verify': typeof VerifyRoute
-  '/addons/$addonId': typeof AddonsAddonIdRoute
+  '': typeof AppRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
+  '/settings': typeof AppSettingsRoute
+  '/verify': typeof AppVerifyRoute
+  '/': typeof AppIndexRoute
+  '/addons/$addonId': typeof AppAddonsAddonIdRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRoute
-  '/verify': typeof VerifyRoute
-  '/addons/$addonId': typeof AddonsAddonIdRoute
+  '/onboarding': typeof OnboardingRoute
+  '/settings': typeof AppSettingsRoute
+  '/verify': typeof AppVerifyRoute
+  '/': typeof AppIndexRoute
+  '/addons/$addonId': typeof AppAddonsAddonIdRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/settings': typeof SettingsRoute
-  '/verify': typeof VerifyRoute
-  '/addons/$addonId': typeof AddonsAddonIdRoute
+  '/_app': typeof AppRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/verify': typeof AppVerifyRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/addons/$addonId': typeof AppAddonsAddonIdRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/verify' | '/addons/$addonId'
+  fullPaths:
+    | ''
+    | '/onboarding'
+    | '/settings'
+    | '/verify'
+    | '/'
+    | '/addons/$addonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/verify' | '/addons/$addonId'
-  id: '__root__' | '/' | '/settings' | '/verify' | '/addons/$addonId'
+  to: '/onboarding' | '/settings' | '/verify' | '/' | '/addons/$addonId'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/onboarding'
+    | '/_app/settings'
+    | '/_app/verify'
+    | '/_app/'
+    | '/_app/addons/$addonId'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  SettingsRoute: typeof SettingsRoute
-  VerifyRoute: typeof VerifyRoute
-  AddonsAddonIdRoute: typeof AddonsAddonIdRoute
+  AppRoute: typeof AppRouteWithChildren
+  OnboardingRoute: typeof OnboardingRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  SettingsRoute: SettingsRoute,
-  VerifyRoute: VerifyRoute,
-  AddonsAddonIdRoute: AddonsAddonIdRoute,
+  AppRoute: AppRouteWithChildren,
+  OnboardingRoute: OnboardingRoute,
 }
 
 export const routeTree = rootRoute
@@ -134,23 +191,37 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
-        "/settings",
-        "/verify",
-        "/addons/$addonId"
+        "/_app",
+        "/onboarding"
       ]
     },
-    "/": {
-      "filePath": "index.tsx"
+    "/_app": {
+      "filePath": "_app.tsx",
+      "children": [
+        "/_app/settings",
+        "/_app/verify",
+        "/_app/",
+        "/_app/addons/$addonId"
+      ]
     },
-    "/settings": {
-      "filePath": "settings.tsx"
+    "/onboarding": {
+      "filePath": "onboarding.tsx"
     },
-    "/verify": {
-      "filePath": "verify.tsx"
+    "/_app/settings": {
+      "filePath": "_app/settings.tsx",
+      "parent": "/_app"
     },
-    "/addons/$addonId": {
-      "filePath": "addons/$addonId.tsx"
+    "/_app/verify": {
+      "filePath": "_app/verify.tsx",
+      "parent": "/_app"
+    },
+    "/_app/": {
+      "filePath": "_app/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/addons/$addonId": {
+      "filePath": "_app/addons/$addonId.tsx",
+      "parent": "/_app"
     }
   }
 }

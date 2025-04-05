@@ -14,6 +14,12 @@ pub struct AppSettings {
 }
 
 impl AppSettings {
+  pub fn create<P: AsRef<Path>>(&self, path: P) -> Result<()> {
+    let file = File::create(path)?;
+    serde_json::to_writer_pretty(file, self)?;
+    Ok(())
+  }
+
   pub fn load<P: AsRef<Path>>(path: P) -> Result<AppSettings> {
     let file = File::open(path)?;
     let data: AppSettings = serde_json::from_reader(file)?;
@@ -35,5 +41,11 @@ impl AppSettings {
   pub fn config_dir(app_handle: &AppHandle) -> Result<PathBuf> {
     let path = app_handle.path().config_dir()?.join("AeroMod");
     Ok(path)
+  }
+
+  pub fn exists(app_handle: &AppHandle) -> Result<bool> {
+    let path = AppSettings::path(app_handle)?;
+    let exists = fs::exists(path)?;
+    Ok(exists)
   }
 }

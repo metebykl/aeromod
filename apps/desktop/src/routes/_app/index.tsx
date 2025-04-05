@@ -28,7 +28,7 @@ import {
   useUninstallAddon,
 } from "@/hooks/addon";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_app/")({
   component: Index,
 });
 

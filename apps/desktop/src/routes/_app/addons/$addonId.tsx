@@ -10,7 +10,7 @@ import {
 } from "@aeromod/ui/components/breadcrumb";
 import { useGetAddon } from "@/hooks/addon";
 
-export const Route = createFileRoute("/addons/$addonId")({
+export const Route = createFileRoute("/_app/addons/$addonId")({
   component: Addon,
 });
 

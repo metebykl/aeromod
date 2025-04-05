@@ -91,6 +91,26 @@ pub fn reveal_addon(app_handle: AppHandle, id: &str) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn get_onboarding_status(app_handle: AppHandle) -> Result<bool, String> {
+  AppSettings::exists(&app_handle).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+pub fn complete_onboarding(app_handle: AppHandle, settings: AppSettings) -> Result<(), String> {
+  let exists = AppSettings::exists(&app_handle).map_err(|e| e.to_string())?;
+  if exists {
+    return Err(String::from("Onboarding already completed"));
+  }
+
+  let path = AppSettings::path(&app_handle).map_err(|e| e.to_string())?;
+  settings.create(path).map_err(|e| e.to_string())?;
+
+  app_handle.manage(Mutex::new(settings));
+
+  Ok(())
+}
+
+#[tauri::command]
 pub fn get_settings(state: State<'_, Mutex<AppSettings>>) -> Result<AppSettings, String> {
   let settings = state.lock().unwrap().clone();
   Ok(settings)

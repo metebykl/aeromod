@@ -13,7 +13,7 @@ import {
 import { useGetAddons, useVerifyAddon } from "@/hooks/addon";
 import { humanFileSize } from "@/lib/utils";
 
-export const Route = createFileRoute("/verify")({
+export const Route = createFileRoute("/_app/verify")({
   component: Verify,
 });
 

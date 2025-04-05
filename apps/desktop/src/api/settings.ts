@@ -6,6 +6,10 @@ export interface AppSettings {
   auto_enable: boolean;
 }
 
+export const DEFAULT_SETTINGS = {
+  auto_enable: true,
+};
+
 export const getSettings = (): Promise<AppSettings> => {
   return invoke("get_settings");
 };
