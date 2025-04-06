@@ -8,6 +8,7 @@ import {
   RefreshCcwIcon,
   Trash2Icon,
 } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@aeromod/ui/components/button";
 import { Checkbox } from "@aeromod/ui/components/checkbox";
@@ -40,13 +41,31 @@ function Index() {
   } = useGetAddons();
 
   const installMutation = useInstallAddon({
-    onSuccess: (done) => done && refetchAddons(),
+    onSuccess: (done) => {
+      if (done) {
+        toast.success("Addon installed.");
+        refetchAddons();
+      }
+    },
   });
   const uninstallMutation = useUninstallAddon({
-    onSuccess: () => refetchAddons(),
+    onSuccess: () => {
+      toast.success("Addon uninstalled.");
+      refetchAddons();
+    },
   });
-  const enableMutation = useEnableAddon({ onSuccess: () => refetchAddons() });
-  const disableMutation = useDisableAddon({ onSuccess: () => refetchAddons() });
+  const enableMutation = useEnableAddon({
+    onSuccess: () => {
+      toast.success("Addon enabled.");
+      refetchAddons();
+    },
+  });
+  const disableMutation = useDisableAddon({
+    onSuccess: () => {
+      toast.success("Addon disabled.");
+      refetchAddons();
+    },
+  });
 
   const [search, setSearch] = useState<string>("");
   const filteredAddons = useMemo(

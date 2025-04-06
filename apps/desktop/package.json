@@ -19,7 +19,8 @@
     "@tauri-apps/plugin-opener": "^2",
     "lucide-react": "^0.485.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "sonner": "^2.0.3"
   },
   "devDependencies": {
     "@aeromod/eslint-config": "workspace:*",

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { open } from "@tauri-apps/plugin-dialog";
 import { AlertCircleIcon, FolderInputIcon, Loader2Icon } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@aeromod/ui/components/button";
 import { Checkbox } from "@aeromod/ui/components/checkbox";
@@ -22,7 +23,10 @@ function Settings() {
 
   // TODO: invalidate cache after updating settings
   const updateMutation = useUpdateSetting({
-    onSuccess: () => refetchSettings(),
+    onSuccess: () => {
+      toast.success("Settings updated.");
+      refetchSettings();
+    },
   });
 
   if (settingsStatus === "pending") {

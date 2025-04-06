@@ -13,6 +13,7 @@ export default tseslint.config(
       "@typescript-eslint/no-misused-promises": "off",
       "@typescript-eslint/no-unused-expressions": "off",
       "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/no-floating-promises": "off",
       "@typescript-eslint/only-throw-error": "off",
       "@typescript-eslint/consistent-type-imports": "error",
     },

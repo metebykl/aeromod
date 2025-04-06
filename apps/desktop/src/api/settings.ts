@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { ipc } from "./ipc";
 
 export interface AppSettings {
   addons_dir: string;
@@ -11,7 +11,7 @@ export const DEFAULT_SETTINGS = {
 };
 
 export const getSettings = (): Promise<AppSettings> => {
-  return invoke("get_settings");
+  return ipc("get_settings");
 };
 
 export const updateSetting = <T extends keyof AppSettings>(
@@ -23,5 +23,5 @@ export const updateSetting = <T extends keyof AppSettings>(
     data = value ? "true" : "false";
   }
 
-  return invoke("update_setting", { key, value: data });
+  return ipc("update_setting", { key, value: data });
 };

@@ -3,6 +3,7 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   disableAddon,
   enableAddon,
@@ -22,30 +23,52 @@ export const useGetAddons = () => {
   return useQuery({ queryKey: ["getAddons"], queryFn: getAddons });
 };
 
-export const useInstallAddon = (options?: MutateOptions<boolean>) => {
-  return useMutation<boolean>({ mutationFn: installAddon, ...options });
+export const useInstallAddon = (
+  options?: MutateOptions<boolean, Error, void, unknown>
+) => {
+  return useMutation({
+    mutationFn: installAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
 };
 
 export const useEnableAddon = (
   options?: MutateOptions<void, Error, string, unknown>
 ) => {
-  return useMutation({ mutationFn: enableAddon, ...options });
+  return useMutation({
+    mutationFn: enableAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
 };
 
 export const useDisableAddon = (
   options?: MutateOptions<void, Error, string, unknown>
 ) => {
-  return useMutation({ mutationFn: disableAddon, ...options });
+  return useMutation({
+    mutationFn: disableAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
 };
 
 export const useUninstallAddon = (
   options?: MutateOptions<void, Error, string, unknown>
 ) => {
-  return useMutation({ mutationFn: uninstallAddon, ...options });
+  return useMutation({
+    mutationFn: uninstallAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
 };
 
 export const useVerifyAddon = (
   options?: MutateOptions<VerificationResult, Error, string, unknown>
 ) => {
-  return useMutation({ mutationFn: verifyAddon, ...options });
+  return useMutation({
+    mutationFn: verifyAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
 };

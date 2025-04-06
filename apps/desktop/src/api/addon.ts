@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { ipc } from "./ipc";
 
 export interface Addon {
   id: string;
@@ -11,31 +11,31 @@ export interface Addon {
 }
 
 export const getAddon = (id: string): Promise<Addon> => {
-  return invoke("get_addon", { id });
+  return ipc("get_addon", { id });
 };
 
 export const getAddons = (): Promise<Addon[]> => {
-  return invoke("get_addons");
+  return ipc("get_addons");
 };
 
 export const installAddon = (): Promise<boolean> => {
-  return invoke("install_addon");
+  return ipc("install_addon");
 };
 
 export const enableAddon = (id: string): Promise<void> => {
-  return invoke("enable_addon", { id });
+  return ipc("enable_addon", { id });
 };
 
 export const disableAddon = (id: string): Promise<void> => {
-  return invoke("disable_addon", { id });
+  return ipc("disable_addon", { id });
 };
 
 export const uninstallAddon = (id: string): Promise<void> => {
-  return invoke("uninstall_addon", { id });
+  return ipc("uninstall_addon", { id });
 };
 
 export const revealAddon = (id: string): Promise<void> => {
-  return invoke("reveal_addon", { id });
+  return ipc("reveal_addon", { id });
 };
 
 export interface VerificationResult {
@@ -50,5 +50,5 @@ export interface VerificationNode {
 }
 
 export const verifyAddon = (id: string): Promise<VerificationResult> => {
-  return invoke("verify_addon", { id });
+  return ipc("verify_addon", { id });
 };

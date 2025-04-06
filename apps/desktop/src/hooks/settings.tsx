@@ -3,6 +3,7 @@ import {
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { type AppSettings, getSettings, updateSetting } from "@/api/settings";
 
 export const useGetSettings = () => {
@@ -19,6 +20,7 @@ export const useUpdateSetting = <T extends keyof AppSettings>(
 ) => {
   return useMutation({
     mutationFn: ({ key, value }) => updateSetting(key, value),
+    onError: (e) => toast.error(e.message),
     ...options,
   });
 };

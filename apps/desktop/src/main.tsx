@@ -6,6 +6,7 @@ import {
   createRouter,
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@aeromod/ui/components/sonner";
 import { ThemeProvider } from "./components/theme-provider";
 import { routeTree } from "./routeTree.gen";
 
@@ -33,6 +34,7 @@ if (!rootElement.innerHTML) {
       <ThemeProvider defaultTheme="dark">
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />
+          <Toaster />
         </QueryClientProvider>
       </ThemeProvider>
     </StrictMode>
