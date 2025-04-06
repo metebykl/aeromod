@@ -1,0 +1,25 @@
+{
+  "name": "@aeromod/root",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.3.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "tauri": "tauri",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "format": "prettier --check \"**/*.ts\"",
+    "format:fix": "prettier --write \"**/*.ts\""
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "^2.4.4",
+    "typescript": "~5.6.2"
+  }
+}

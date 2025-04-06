@@ -1,81 +1,109 @@
-<h1 align='center'>AeroMod</h1>
-
-<p align="center">
-   <img src="./build/appicon.png" width="15%"/><br/>
-</p>
-
-<p align="center">
-An external mod manager for Microsoft Flight Simulator.
-</p>
-
-<p align="center">
-  <a href="https://wails.io/">
-    <img alt="wails" src="https://img.shields.io/badge/backend-wails-C23C36"/>
-  </a>
-  <a href="https://react.dev/">
-    <img alt="react" src="https://img.shields.io/badge/frontend-react-36789A"/>
-  </a>
-</p>
-
 <div align="center">
-<strong>
-<samp>
-
-[English](README.md)
-
-</samp>
-</strong>
+  <img align="center" width="128px" src="./src-tauri/icons/128x128@2x.png" />
+  <h1 align="center"><b>AeroMod</b></h1>
+  <p align="center">
+		An external mod manager for Microsoft Flight Simulator.
+    <br />
+    <a href="https://flightsim.to/file/79373/aeromod"><strong>flightsim.to »</strong></a>
+  </p>
 </div>
 
-## About
+<br/>
 
-AeroMod is a tool designed to efficiently manage Microsoft Flight Simulator mods. With AeroMod, you can easily enable, disable, install, and uninstall mods without physically moving files. AeroMod is Windows-only.
+![App Screenshot](./.github/screenshot-01.png)
 
-## Screenshots
-
-![](./.github/screenshot-01.png)
-
-### Verify Mods
-
-![](./.github/screenshot-02.png)
-
-### Install Mods
-
-![](./.github/screenshot-03.png)
-
-### Settings
-
-![](./.github/screenshot-04.png)
+AeroMod is a lightweight, user-friendly addon manager built for
+Microsoft Flight Simulator that lets you manager your addons effortlessly.
 
 ## Features
 
-- Enable/Disable mods.
-- Install/Uninstall mods.
-- Verify mod files.
-- Search for mods.
-- Display mod details such as type, author, and version.
-- Filter mods using categories.
+- ✅ **Enable / Disable Addons** – Instantly toggle addons on or off without moving files around.
+- 📦 **Install / Uninstall Addons** – Seamlessly add or remove addons with just a few clicks.
+- 🛠️ **Verify Addon Files** – Check for missing or corrupted files to ensure addon integrity.
+- 🔍 **Search Addons** – Quickly find the addon you're looking for.
+- 🧩 **View Addon Details** – See important info like type, author, and version.
 
-## Roadmap
+## How It Works
 
-- Add presets for saving enabled mods.
-- Display scenery locations on a map.
-- Mod grouping ability.
-- Checking version conflicts.
-- Installing mods from remote URLs.
+AeroMod uses symbolic links to manage addons. This approach offers several advantages:
 
-## Environment Setup
+- 🚀 **Better Performance** - No lengthy file copying operations.
+- 🍃 **Disk Space Efficiency** - Addons are stored in one location, eliminating duplicates.
+- 🛡️ **Safer Operation** - Original addon files remain untouched, preventing corruption.
 
-- [Go](https://go.dev/doc/install)
-- [Node](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs)
-- [Wails](https://wails.io/docs/next/gettingstarted/installation)
+## Development
 
-> As AeroMod is primarily developed using the Wails framework, the environment can be set up following the [installation tutorial of Wails](https://wails.io/docs/gettingstarted/installation).
+AeroMod is a [Tauri](https://tauri.app) based application. Its frontend
+is written in [React](https://react.dev) using [TypeScript](https://www.typescriptlang.org)
+and its backend is written in [Rust](https://www.rust-lang.org).
 
-### Installation
+### Prerequisites
 
-```bash
-git clone https://github.com/metebykl/aeromod.git
+In order to get started you’ll first need to install a few dependencies:
+
+1. Tauri System Dependencies
+
+Visit https://tauri.app/start/prerequisites/#system-dependencies to install
+**Tauri System Dependencies**.
+
+2. Rust
+
+Visit https://www.rust-lang.org/tools/install to install **Rust**.
+
+3. Node.js
+
+Ensure you've got at least **Node.js 20** installed. Visit https://nodejs.org/en/download
+to install **Node.js**.
+
+4. pnpm
+
+Use **corepack** to install **pnpm**:
+
+```sh
 cd aeromod
-wails dev
+corepack enable
 ```
+
+### Setup
+
+Install project dependencies:
+
+```sh
+pnpm install
+```
+
+### Running Locally
+
+Run the app in development mode:
+
+```sh
+pnpm tauri dev
+```
+
+### Lint & Format
+
+TypeScript:
+
+```sh
+pnpm lint
+pnpm format
+```
+
+Rust:
+
+```sh
+cargo clippy
+cargo format
+```
+
+### Build
+
+Create a production build:
+
+```sh
+pnpm tauri build
+```
+
+## License
+
+Distributed under the MIT License. See [LICENSE](LICENSE) for more information.

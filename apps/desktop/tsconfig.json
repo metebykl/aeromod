@@ -1,0 +1,10 @@
+{
+  "extends": "@aeromod/typescript-config/react-app.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
