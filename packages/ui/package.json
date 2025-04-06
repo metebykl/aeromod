@@ -12,6 +12,7 @@
     "./styles.css": "./src/styles.css"
   },
   "scripts": {
+    "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -33,7 +34,9 @@
     "tw-animate-css": "^1.2.5"
   },
   "devDependencies": {
+    "@aeromod/eslint-config": "workspace:*",
     "@aeromod/typescript-config": "workspace:*",
+    "eslint": "^9.24.0",
     "tailwindcss": "^4.0.17"
   }
 }

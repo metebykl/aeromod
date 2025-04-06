@@ -24,7 +24,7 @@ export function Sidebar() {
     <aside className="bg-background fixed left-0 top-0 flex h-screen w-16 flex-col justify-between border-r py-4">
       <nav className="flex flex-col items-center gap-y-3">
         {routes.map((r) => (
-          <Hint label={r.hint} side="right">
+          <Hint key={r.href} label={r.hint} side="right">
             <Button
               key={r.href}
               variant="ghost"

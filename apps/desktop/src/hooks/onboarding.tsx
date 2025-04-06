@@ -1,4 +1,4 @@
-import { MutateOptions, useMutation } from "@tanstack/react-query";
+import { type MutateOptions, useMutation } from "@tanstack/react-query";
 import { completeOnboarding } from "@/api/onboarding";
 import type { AppSettings } from "@/api/settings";
 

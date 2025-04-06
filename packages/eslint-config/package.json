@@ -1,0 +1,18 @@
+{
+  "name": "@aeromod/eslint-config",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./base": "./base.js",
+    "./react": "./react.js"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "globals": "^16.0.0",
+    "typescript-eslint": "^8.29.0"
+  }
+}

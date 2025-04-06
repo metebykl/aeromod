@@ -1,7 +1,6 @@
 {
   "name": "@aeromod/root",
   "private": true,
-  "version": "0.1.0",
   "type": "module",
   "engines": {
     "node": ">=20"
@@ -10,8 +9,8 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "preview": "turbo run preview",
     "tauri": "tauri",
+    "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "format": "prettier --check \"**/*.ts\"",
     "format:fix": "prettier --write \"**/*.ts\""
