@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
 } from "@aeromod/ui/components/dropdown-menu";
 import { Input } from "@aeromod/ui/components/input";
-import { revealAddon } from "@/api/addon";
+import { type Addon, revealAddon } from "@/api/addon";
 import { Hint } from "@/components/hint";
 import {
   useDisableAddon,
@@ -28,6 +28,7 @@ import {
   useInstallAddon,
   useUninstallAddon,
 } from "@/hooks/addon";
+import { useConfirm } from "@/hooks/confirm";
 
 export const Route = createFileRoute("/_app/")({
   component: Index,
@@ -40,30 +41,12 @@ function Index() {
     refetch: refetchAddons,
   } = useGetAddons();
 
-  const installMutation = useInstallAddon({
+  const install = useInstallAddon({
     onSuccess: (done) => {
       if (done) {
         toast.success("Addon installed.");
         refetchAddons();
       }
-    },
-  });
-  const uninstallMutation = useUninstallAddon({
-    onSuccess: () => {
-      toast.success("Addon uninstalled.");
-      refetchAddons();
-    },
-  });
-  const enableMutation = useEnableAddon({
-    onSuccess: () => {
-      toast.success("Addon enabled.");
-      refetchAddons();
-    },
-  });
-  const disableMutation = useDisableAddon({
-    onSuccess: () => {
-      toast.success("Addon disabled.");
-      refetchAddons();
     },
   });
 
@@ -105,21 +88,65 @@ function Index() {
             className="w-[300px]"
             placeholder="Search addons..."
           />
-          <Button
-            onClick={() => installMutation.mutate()}
-            disabled={installMutation.isPending}
-          >
-            {installMutation.isPending ? (
+          <Button onClick={() => install.mutate()} disabled={install.isPending}>
+            {install.isPending ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <DownloadIcon className="size-4" />
             )}
-            {installMutation.isPending ? "Installing..." : "Install"}
+            {install.isPending ? "Installing..." : "Install"}
           </Button>
         </div>
       </div>
+      <AddonList addons={filteredAddons ?? []} refetchAddons={refetchAddons} />
+    </div>
+  );
+}
+
+interface AddonListProps {
+  addons: Addon[];
+  refetchAddons: () => void;
+}
+
+function AddonList({ addons, refetchAddons }: AddonListProps) {
+  const [ConfirmDialog, confirm] = useConfirm();
+
+  const enable = useEnableAddon({
+    onSuccess: () => {
+      toast.success("Addon enabled.");
+      refetchAddons();
+    },
+  });
+
+  const disable = useDisableAddon({
+    onSuccess: () => {
+      toast.success("Addon disabled.");
+      refetchAddons();
+    },
+  });
+
+  const uninstall = useUninstallAddon({
+    onSuccess: () => {
+      toast.success("Addon uninstalled.");
+      refetchAddons();
+    },
+  });
+
+  const handleUninstall = async (id: Addon["id"]) => {
+    const ok = await confirm({
+      title: `Are you sure?`,
+      description: `This action cannot be undone. This will permanently uninstall ${id}.`,
+    });
+
+    if (ok) {
+      uninstall.mutate(id);
+    }
+  };
+
+  return (
+    <>
       <div className="flex flex-col gap-y-2 overflow-y-auto">
-        {filteredAddons?.map((addon) => (
+        {addons.map((addon) => (
           <div
             key={addon.id}
             className="bg-muted flex items-center justify-between rounded-md border px-4 py-1"
@@ -129,9 +156,7 @@ function Index() {
                 checked={addon.enabled}
                 onCheckedChange={(value) => {
                   if (value === "indeterminate") return;
-                  value
-                    ? enableMutation.mutate(addon.id)
-                    : disableMutation.mutate(addon.id);
+                  value ? enable.mutate(addon.id) : disable.mutate(addon.id);
                 }}
               />
               <div>
@@ -165,7 +190,7 @@ function Index() {
                   <span>Open</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
-                  onSelect={() => uninstallMutation.mutate(addon.id)}
+                  onSelect={() => handleUninstall(addon.id)}
                   className="cursor-pointer gap-x-2"
                 >
                   <Trash2Icon />
@@ -176,6 +201,7 @@ function Index() {
           </div>
         ))}
       </div>
-    </div>
+      <ConfirmDialog />
+    </>
   );
 }
