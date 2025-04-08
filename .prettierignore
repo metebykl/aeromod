@@ -1,3 +1,5 @@
-.turbo
-apps/desktop/src/routeTree.gen.ts
+.turbo/
+dist/
+target/
 pnpm-lock.yaml
+apps/desktop/src/routeTree.gen.ts
