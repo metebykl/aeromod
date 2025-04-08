@@ -12,8 +12,8 @@
     "tauri": "tauri",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
-    "format": "prettier --check \"**/*.ts\"",
-    "format:fix": "prettier --write \"**/*.ts\""
+    "format": "prettier --check .",
+    "format:fix": "prettier --write ."
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2",
