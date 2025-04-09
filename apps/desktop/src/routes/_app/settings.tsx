@@ -5,7 +5,7 @@ import { AlertCircleIcon, FolderInputIcon, Loader2Icon } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@aeromod/ui/components/button";
-import { Checkbox } from "@aeromod/ui/components/checkbox";
+import { Switch } from "@aeromod/ui/components/switch";
 import { Input } from "@aeromod/ui/components/input";
 import { ModeToggle } from "@/components/mode-toggle";
 import { useGetSettings, useUpdateSetting } from "@/hooks/settings";
@@ -78,10 +78,9 @@ function Settings() {
               Automatically enable addons after installation.
             </p>
           </div>
-          <Checkbox
+          <Switch
             checked={settings.auto_enable}
             onCheckedChange={(checked) => {
-              if (checked === "indeterminate") return;
               updateMutation.mutate({ key: "auto_enable", value: checked });
             }}
           />
