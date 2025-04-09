@@ -34,8 +34,11 @@ pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
     None => return Ok(false),
   };
 
-  // TODO: enable addon after install if auto_enable is true
-  addon::install_addon(&settings, &addon_path).map_err(|e| e.to_string())?;
+  let name = addon::install_addon(&settings, &addon_path).map_err(|e| e.to_string())?;
+  if settings.auto_enable {
+    addon::enable_addon(&settings, &name).map_err(|e| e.to_string())?;
+  }
+
   Ok(true)
 }
 
