@@ -5,6 +5,7 @@ import {
   FolderSymlinkIcon,
   Loader2,
   MoreHorizontalIcon,
+  PencilIcon,
   RefreshCcwIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -26,9 +27,11 @@ import {
   useEnableAddon,
   useGetAddons,
   useInstallAddon,
+  useRenameAddon,
   useUninstallAddon,
 } from "@/hooks/addon";
 import { useConfirm } from "@/hooks/confirm";
+import { usePrompt } from "@/hooks/prompt";
 
 export const Route = createFileRoute("/_app/")({
   component: Index,
@@ -110,6 +113,7 @@ interface AddonListProps {
 
 function AddonList({ addons, refetchAddons }: AddonListProps) {
   const [ConfirmDialog, confirm] = useConfirm();
+  const [PromptDialog, prompt] = usePrompt();
 
   const enable = useEnableAddon({
     onSuccess: () => {
@@ -132,6 +136,13 @@ function AddonList({ addons, refetchAddons }: AddonListProps) {
     },
   });
 
+  const rename = useRenameAddon({
+    onSuccess: () => {
+      toast.success("Addon renamed.");
+      refetchAddons();
+    },
+  });
+
   const handleUninstall = async (id: Addon["id"]) => {
     const ok = await confirm({
       title: `Are you sure?`,
@@ -141,6 +152,16 @@ function AddonList({ addons, refetchAddons }: AddonListProps) {
     if (ok) {
       uninstall.mutate(id);
     }
+  };
+
+  const handleRename = async (id: Addon["id"]) => {
+    const name = await prompt({
+      title: "Rename addon",
+      description: "Specify a new identifier for the addon.",
+      initialValue: id,
+    });
+
+    rename.mutate({ id: id, newId: name });
   };
 
   return (
@@ -175,7 +196,7 @@ function AddonList({ addons, refetchAddons }: AddonListProps) {
                 </div>
               </div>
             </div>
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="icon">
                   <MoreHorizontalIcon />
@@ -190,6 +211,13 @@ function AddonList({ addons, refetchAddons }: AddonListProps) {
                   <span>Open</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
+                  onSelect={() => handleRename(addon.id)}
+                  className="cursor-pointer gap-x-2"
+                >
+                  <PencilIcon />
+                  <span>Rename</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
                   onSelect={() => handleUninstall(addon.id)}
                   className="cursor-pointer gap-x-2"
                 >
@@ -202,6 +230,7 @@ function AddonList({ addons, refetchAddons }: AddonListProps) {
         ))}
       </div>
       <ConfirmDialog />
+      <PromptDialog />
     </>
   );
 }
