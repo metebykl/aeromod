@@ -67,6 +67,18 @@ pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result
 }
 
 #[tauri::command]
+pub fn rename_addon(
+  state: State<'_, Mutex<AppSettings>>,
+  id: &str,
+  new_id: &str,
+) -> Result<(), String> {
+  let state = state.lock().unwrap();
+  addon::rename_addon(&state, id, new_id).map_err(|e| e.to_string())?;
+
+  Ok(())
+}
+
+#[tauri::command]
 pub fn verify_addon(
   state: State<'_, Mutex<AppSettings>>,
   id: &str,

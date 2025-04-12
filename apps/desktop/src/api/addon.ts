@@ -34,6 +34,10 @@ export const uninstallAddon = (id: string): Promise<void> => {
   return ipc("uninstall_addon", { id });
 };
 
+export const renameAddon = (id: string, newId: string): Promise<void> => {
+  return ipc("rename_addon", { id, newId });
+};
+
 export const revealAddon = (id: string): Promise<void> => {
   return ipc("reveal_addon", { id });
 };

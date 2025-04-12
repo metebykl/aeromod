@@ -41,6 +41,7 @@ pub fn run() {
     app::enable_addon,
     app::disable_addon,
     app::uninstall_addon,
+    app::rename_addon,
     app::verify_addon,
     app::reveal_addon,
     app::get_settings,

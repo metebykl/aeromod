@@ -160,6 +160,33 @@ pub fn uninstall_addon(settings: &AppSettings, id: &str) -> Result<()> {
   Ok(())
 }
 
+pub fn rename_addon(settings: &AppSettings, id: &str, new_id: &str) -> Result<()> {
+  let addon = parse_addon(settings, id)?;
+
+  let was_enabled = addon.enabled;
+  if was_enabled {
+    disable_addon(settings, id)?;
+  }
+
+  let old_path = Path::new(&settings.addons_dir).join(id);
+  if !old_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  let new_path = Path::new(&settings.addons_dir).join(new_id);
+  if new_path.exists() {
+    return Err(anyhow!("Addon '{}' already exists", id));
+  }
+
+  fs::rename(old_path, new_path)?;
+
+  if was_enabled {
+    enable_addon(settings, new_id)?;
+  }
+
+  Ok(())
+}
+
 #[derive(Serialize, Deserialize)]
 struct Layout {
   content: Vec<LayoutContent>,

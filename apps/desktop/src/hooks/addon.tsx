@@ -10,6 +10,7 @@ import {
   getAddon,
   getAddons,
   installAddon,
+  renameAddon,
   uninstallAddon,
   type VerificationResult,
   verifyAddon,
@@ -58,6 +59,16 @@ export const useUninstallAddon = (
 ) => {
   return useMutation({
     mutationFn: uninstallAddon,
+    onError: (e) => toast.error(e.message),
+    ...options,
+  });
+};
+
+export const useRenameAddon = (
+  options?: MutateOptions<void, Error, { id: string; newId: string }, unknown>
+) => {
+  return useMutation({
+    mutationFn: ({ id, newId }) => renameAddon(id, newId),
     onError: (e) => toast.error(e.message),
     ...options,
   });
