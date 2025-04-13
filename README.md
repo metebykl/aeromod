@@ -10,7 +10,7 @@
 
 <br/>
 
-![App Screenshot](./.github/screenshot-01.png)
+![App Screenshot](./.github/screenshot.png)
 
 AeroMod is a lightweight, user-friendly addon manager built for
 Microsoft Flight Simulator that lets you manager your addons effortlessly.
