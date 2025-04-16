@@ -15,6 +15,7 @@ import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app/index'
 import { Route as AppVerifyImport } from './routes/_app/verify'
+import { Route as AppStatisticsImport } from './routes/_app/statistics'
 import { Route as AppSettingsImport } from './routes/_app/settings'
 import { Route as AppAddonsAddonIdImport } from './routes/_app/addons/$addonId'
 
@@ -40,6 +41,12 @@ const AppIndexRoute = AppIndexImport.update({
 const AppVerifyRoute = AppVerifyImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppStatisticsRoute = AppStatisticsImport.update({
+  id: '/statistics',
+  path: '/statistics',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -80,6 +87,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppSettingsImport
       parentRoute: typeof AppImport
     }
+    '/_app/statistics': {
+      id: '/_app/statistics'
+      path: '/statistics'
+      fullPath: '/statistics'
+      preLoaderRoute: typeof AppStatisticsImport
+      parentRoute: typeof AppImport
+    }
     '/_app/verify': {
       id: '/_app/verify'
       path: '/verify'
@@ -108,6 +122,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStatisticsRoute: typeof AppStatisticsRoute
   AppVerifyRoute: typeof AppVerifyRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAddonsAddonIdRoute: typeof AppAddonsAddonIdRoute
@@ -115,6 +130,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
+  AppStatisticsRoute: AppStatisticsRoute,
   AppVerifyRoute: AppVerifyRoute,
   AppIndexRoute: AppIndexRoute,
   AppAddonsAddonIdRoute: AppAddonsAddonIdRoute,
@@ -126,6 +142,7 @@ export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/settings': typeof AppSettingsRoute
+  '/statistics': typeof AppStatisticsRoute
   '/verify': typeof AppVerifyRoute
   '/': typeof AppIndexRoute
   '/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -134,6 +151,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/settings': typeof AppSettingsRoute
+  '/statistics': typeof AppStatisticsRoute
   '/verify': typeof AppVerifyRoute
   '/': typeof AppIndexRoute
   '/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -144,6 +162,7 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/onboarding': typeof OnboardingRoute
   '/_app/settings': typeof AppSettingsRoute
+  '/_app/statistics': typeof AppStatisticsRoute
   '/_app/verify': typeof AppVerifyRoute
   '/_app/': typeof AppIndexRoute
   '/_app/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -155,16 +174,24 @@ export interface FileRouteTypes {
     | ''
     | '/onboarding'
     | '/settings'
+    | '/statistics'
     | '/verify'
     | '/'
     | '/addons/$addonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/onboarding' | '/settings' | '/verify' | '/' | '/addons/$addonId'
+  to:
+    | '/onboarding'
+    | '/settings'
+    | '/statistics'
+    | '/verify'
+    | '/'
+    | '/addons/$addonId'
   id:
     | '__root__'
     | '/_app'
     | '/onboarding'
     | '/_app/settings'
+    | '/_app/statistics'
     | '/_app/verify'
     | '/_app/'
     | '/_app/addons/$addonId'
@@ -199,6 +226,7 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/settings",
+        "/_app/statistics",
         "/_app/verify",
         "/_app/",
         "/_app/addons/$addonId"
@@ -209,6 +237,10 @@ export const routeTree = rootRoute
     },
     "/_app/settings": {
       "filePath": "_app/settings.tsx",
+      "parent": "/_app"
+    },
+    "/_app/statistics": {
+      "filePath": "_app/statistics.tsx",
       "parent": "/_app"
     },
     "/_app/verify": {

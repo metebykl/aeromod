@@ -1,6 +1,11 @@
 import { openUrl } from "@tauri-apps/plugin-opener";
 import { Link } from "@tanstack/react-router";
-import { CheckCircleIcon, ListIcon, SettingsIcon } from "lucide-react";
+import {
+  ListIcon,
+  PackageCheckIcon,
+  PieChartIcon,
+  SettingsIcon,
+} from "lucide-react";
 
 import { Button } from "@aeromod/ui/components/button";
 import { GITHUB_URL } from "@/constants";
@@ -13,8 +18,13 @@ const routes = [
     hint: "Addons",
   },
   {
+    href: "/statistics",
+    icon: PieChartIcon,
+    hint: "Statistics",
+  },
+  {
     href: "/verify",
-    icon: CheckCircleIcon,
+    icon: PackageCheckIcon,
     hint: "Verify Addons",
   },
 ];
