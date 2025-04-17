@@ -1,0 +1,72 @@
+name: "\U0001F41B Bug Report"
+description: Report an issue
+labels: ["triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for submitting a bug report.
+        Please fill out this form as much as possible.
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Which version of AeroMod are you running?
+      placeholder: 0.11.0
+    validations:
+      required: true
+  - type: dropdown
+    id: operating-system
+    attributes:
+      label: Operating System
+      description: Which operating system are you using?
+      multiple: false
+      options:
+        - Windows
+        - Linux
+      default: 0
+    validations:
+      required: true
+  - type: dropdown
+    id: distribution
+    attributes:
+      label: Distribution Method
+      description: Which package of AeroMod are you using?
+      multiple: false
+      options:
+        - nsis (Windows)
+        - deb (Linux)
+      default: 0
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the issue
+      description: Please describe the bug as clear and concise as possible (e.g., screenshots, logs, etc.).
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: How do you reproduce this bug? Please walk us through it step by step.
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: false
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: Explain what you expected to happen.
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Add any other information related to the bug that might help us investigate.
+    validations:
+      required: false
