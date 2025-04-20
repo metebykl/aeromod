@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { AlertCircleIcon, Loader2Icon } from "lucide-react";
 
@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@aeromod/ui/components/select";
+import type { VerificationNode } from "@/api/addon";
 import { useGetAddons, useVerifyAddon } from "@/hooks/addon";
 import { humanFileSize } from "@/lib/utils";
 
@@ -24,6 +25,19 @@ function Verify() {
     data: verification,
     status: verificationStatus,
   } = useVerifyAddon();
+
+  const sortedFiles = useMemo(
+    () =>
+      verification?.files.sort((a, b) => {
+        const order: Record<VerificationNode["status"], number> = {
+          NotFound: 0,
+          SizeMismatch: 1,
+          Ok: 2,
+        };
+        return order[a.status] - order[b.status];
+      }),
+    [verification]
+  );
 
   const [selected, setSelected] = useState<string>();
 
@@ -79,7 +93,7 @@ function Verify() {
       )}
       {verificationStatus === "success" && (
         <div className="flex flex-col gap-y-2 overflow-y-auto">
-          {verification?.files.map((f) => (
+          {sortedFiles?.map((f) => (
             <div
               key={f.path}
               className="bg-muted flex w-full items-center justify-between rounded px-3 py-1.5"
