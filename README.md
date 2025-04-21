@@ -1,5 +1,5 @@
 <div align="center">
-  <img align="center" width="128px" src="./src-tauri/icons/128x128@2x.png" />
+  <img align="center" width="128px" src="./crates/aeromod-tauri/icons/128x128@2x.png" />
   <h1 align="center"><b>AeroMod</b></h1>
   <p align="center">
 		An external mod manager for Microsoft Flight Simulator.
