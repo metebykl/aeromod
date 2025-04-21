@@ -1,6 +1,6 @@
 rust:
   - changed-files:
-      - any-glob-to-any-file: src-tauri/**/*
+      - any-glob-to-any-file: crates/**/*
 
 "@aeromod/desktop":
   - changed-files:
