@@ -1,10 +1,11 @@
-use std::ffi::OsStr;
 use std::fs;
 use std::fs::File;
 use std::path::Path;
 
 use anyhow::{Context, Result, anyhow};
 use serde::{Deserialize, Serialize};
+use tempfile::tempdir;
+use walkdir::WalkDir;
 
 use crate::common::manifest;
 use crate::settings::AppSettings;
@@ -72,27 +73,35 @@ pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
     return Err(anyhow!("Directory '{}' does not exist", src.display()));
   }
 
-  // TODO: extract archives
-  if !src.is_dir() {
-    match src.extension().and_then(OsStr::to_str) {
-      Some("zip") => {
-        return Err(anyhow!("ZIP installation not yet implemented"));
-      }
-      Some("rar") => {
-        return Err(anyhow!("RAR installation not yet implemented"));
-      }
-      _ => {
-        return Err(anyhow!("Path '{}' is not a directory", src.display()));
-      }
+  let tmp_guard = tempdir()?;
+
+  let search_dir = if src.is_dir() {
+    src.to_path_buf()
+  } else {
+    aeromod_fs::extract_archive(src, tmp_guard.path())?;
+    tmp_guard.path().to_path_buf()
+  };
+
+  let mut addon_dir = None;
+  for entry in WalkDir::new(&search_dir) {
+    let entry = entry?;
+    let path = entry.path();
+    let file_name = entry.file_name();
+
+    if path.is_file() && file_name == "manifest.json" {
+      addon_dir = path.parent().map(|p| p.to_path_buf());
+      break;
     }
   }
 
-  let manifest_path = src.join("manifest.json");
-  if !manifest_path.exists() {
-    return Err(anyhow!("No manifest.json found in '{}'", src.display()));
-  }
+  let addon_dir = addon_dir.context(format!(
+    "No manifest.json found in '{}'",
+    search_dir.display()
+  ))?;
 
-  let id = src.file_name().context("Failed to get file name")?;
+  let id = addon_dir
+    .file_name()
+    .context("Failed to get addon directory name")?;
 
   let dst = Path::new(&settings.addons_dir).join(id);
   if dst.exists() {
@@ -102,7 +111,7 @@ pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
     ));
   }
 
-  utils::copy_dir_all(src, &dst).context("Failed to copy addon files")?;
+  utils::copy_dir_all(&addon_dir, &dst).context("Failed to copy addon files")?;
 
   let id = id.to_str().context("Failed to convert id to string")?;
   Ok(id.to_string())
