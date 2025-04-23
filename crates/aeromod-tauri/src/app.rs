@@ -29,7 +29,7 @@ pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
   let state = app_handle.state::<Mutex<AppSettings>>();
   let settings = state.lock().unwrap();
 
-  let addon_path = match app_handle.dialog().file().blocking_pick_folder() {
+  let addon_path = match app_handle.dialog().file().blocking_pick_file() {
     Some(p) => p.into_path().map_err(|e| e.to_string())?,
     None => return Ok(false),
   };
