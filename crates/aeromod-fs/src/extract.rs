@@ -5,6 +5,7 @@ use std::io::{Read, Seek};
 use std::path::Path;
 
 use anyhow::{Result, anyhow};
+use unrar::Archive;
 use zip::ZipArchive;
 
 pub fn extract_archive(archive_path: &Path, target_dir: &Path) -> Result<()> {
@@ -18,6 +19,7 @@ pub fn extract_archive(archive_path: &Path, target_dir: &Path) -> Result<()> {
 
   match archive_type {
     "zip" => extract_zip_archive(file, target_dir),
+    "rar" => extract_rar_archive(archive_path, target_dir),
     _ => Err(anyhow!("Unsupported archive type: '{}'", archive_type)),
   }
 }
@@ -55,6 +57,22 @@ fn extract_zip_archive<R: Read + Seek>(reader: R, target_dir: &Path) -> Result<(
         // Check if it's a symlink, don't chmod symlinks directly
         fs::set_permissions(&target_path, fs::Permissions::from_mode(mode))?;
       }
+    }
+  }
+
+  Ok(())
+}
+
+fn extract_rar_archive(archive_path: &Path, target_dir: &Path) -> Result<()> {
+  let mut archive = Archive::new(archive_path).open_for_processing()?;
+  while let Some(header) = archive.read_header()? {
+    let entry = header.entry();
+
+    archive = if header.entry().is_file() {
+      let target_path = target_dir.join(&entry.filename);
+      header.extract_to(target_path)?
+    } else {
+      header.skip()?
     }
   }
 
