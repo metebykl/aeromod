@@ -33,7 +33,7 @@ pub fn parse_addon(settings: &AppSettings, id: &str) -> Result<Addon> {
     return Err(anyhow!("Not a directory"));
   };
 
-  let manifest = manifest::parse_manifest(&path.join("manifest.json"))?;
+  let manifest = manifest::parse_manifest(path.join("manifest.json"))?;
   let enabled = Path::new(&settings.community_dir).join(id).exists();
 
   Ok(Addon {
@@ -59,7 +59,7 @@ pub fn get_addons(settings: &AppSettings) -> Result<Vec<Addon>> {
       }
     };
 
-    if let Ok(addon) = parse_addon(&settings, &name) {
+    if let Ok(addon) = parse_addon(settings, &name) {
       addons.push(addon);
     }
   }

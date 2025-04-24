@@ -33,7 +33,7 @@ impl AppSettings {
   }
 
   pub fn path(app_handle: &AppHandle) -> Result<PathBuf> {
-    let config_dir = AppSettings::config_dir(&app_handle)?;
+    let config_dir = AppSettings::config_dir(app_handle)?;
     let path = config_dir.join("settings.json");
     Ok(path)
   }
