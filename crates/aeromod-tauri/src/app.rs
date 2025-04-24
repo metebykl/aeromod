@@ -8,26 +8,26 @@ use tauri_plugin_opener::OpenerExt;
 use crate::common::addon;
 use crate::settings::AppSettings;
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<addon::Addon, String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   let addons = addon::parse_addon(&state, id).map_err(|e| e.to_string())?;
 
   Ok(addons)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn get_addons(state: State<'_, Mutex<AppSettings>>) -> Result<Vec<addon::Addon>, String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   let addons = addon::get_addons(&state).map_err(|e| e.to_string())?;
 
   Ok(addons)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
   let state = app_handle.state::<Mutex<AppSettings>>();
-  let settings = state.lock().unwrap();
+  let settings = state.lock().unwrap().clone();
 
   let addon_path = match app_handle.dialog().file().blocking_pick_file() {
     Some(p) => p.into_path().map_err(|e| e.to_string())?,
@@ -42,55 +42,55 @@ pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
   Ok(true)
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn enable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   addon::enable_addon(&state, id).map_err(|e| e.to_string())?;
 
   Ok(())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   addon::disable_addon(&state, id).map_err(|e| e.to_string())?;
 
   Ok(())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   addon::uninstall_addon(&state, id).map_err(|e| e.to_string())?;
 
   Ok(())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn rename_addon(
   state: State<'_, Mutex<AppSettings>>,
   id: &str,
   new_id: &str,
 ) -> Result<(), String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   addon::rename_addon(&state, id, new_id).map_err(|e| e.to_string())?;
 
   Ok(())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn verify_addon(
   state: State<'_, Mutex<AppSettings>>,
   id: &str,
 ) -> Result<addon::VerificationResult, String> {
-  let state = state.lock().unwrap();
+  let state = state.lock().unwrap().clone();
   addon::verify_addon(&state, id).map_err(|e| e.to_string())
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 pub fn reveal_addon(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let state = app_handle.state::<Mutex<AppSettings>>();
-  let settings = state.lock().unwrap();
+  let settings = state.lock().unwrap().clone();
 
   let addon_path = Path::new(&settings.addons_dir).join(id);
   if !addon_path.exists() {
