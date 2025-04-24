@@ -24,6 +24,3 @@ walkdir = "2.5.0"
 tempfile = "3.19.1"
 
 aeromod-fs.workspace = true
-
-[target.'cfg(windows)'.dependencies]
-junction = "1.2.0"

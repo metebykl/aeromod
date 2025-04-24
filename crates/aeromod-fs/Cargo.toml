@@ -8,3 +8,6 @@ publish = false
 [dependencies]
 anyhow.workspace = true
 zip = "2.6.1"
+
+[target.'cfg(windows)'.dependencies]
+junction = "1.2.0"
