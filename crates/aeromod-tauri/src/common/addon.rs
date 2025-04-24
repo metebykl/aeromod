@@ -9,7 +9,6 @@ use walkdir::WalkDir;
 
 use crate::common::manifest;
 use crate::settings::AppSettings;
-use crate::utils;
 
 #[derive(Serialize, Deserialize)]
 pub struct Addon {
@@ -24,7 +23,7 @@ pub struct Addon {
 
 pub fn parse_addon(settings: &AppSettings, id: &str) -> Result<Addon> {
   let path = Path::new(&settings.addons_dir).join(id);
-  let size = utils::get_directory_size(&path).unwrap_or(0);
+  let size = aeromod_fs::get_directory_size(&path).unwrap_or(0);
 
   if !path.exists() {
     return Err(anyhow!("Addon '{}' not found in addons directory", id));
@@ -111,7 +110,7 @@ pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
     ));
   }
 
-  utils::copy_dir_all(&addon_dir, &dst).context("Failed to copy addon files")?;
+  aeromod_fs::copy_dir_all(&addon_dir, &dst).context("Failed to copy addon files")?;
 
   let id = id.to_str().context("Failed to convert id to string")?;
   Ok(id.to_string())
@@ -131,7 +130,7 @@ pub fn enable_addon(settings: &AppSettings, id: &str) -> Result<()> {
     ));
   }
 
-  utils::symlink_dir(addon_path, target_path).context("Failed to create symlink")?;
+  aeromod_fs::symlink_dir(addon_path, target_path).context("Failed to create symlink")?;
   Ok(())
 }
 
@@ -149,7 +148,7 @@ pub fn disable_addon(settings: &AppSettings, id: &str) -> Result<()> {
     ));
   }
 
-  utils::remove_symlink_dir(target_path).context("Failed to remove symlink")?;
+  aeromod_fs::remove_symlink_dir(target_path).context("Failed to remove symlink")?;
   Ok(())
 }
 

@@ -8,7 +8,6 @@ use settings::AppSettings;
 mod app;
 mod common;
 mod settings;
-mod utils;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
