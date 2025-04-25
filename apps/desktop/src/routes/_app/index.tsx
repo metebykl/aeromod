@@ -30,8 +30,8 @@ import {
   useRenameAddon,
   useUninstallAddon,
 } from "@/hooks/addon";
-import { useConfirm } from "@/hooks/confirm";
-import { usePrompt } from "@/hooks/prompt";
+import { useConfirm } from "@/hooks/use-confirm";
+import { usePrompt } from "@/hooks/use-prompt";
 
 export const Route = createFileRoute("/_app/")({
   component: Index,
