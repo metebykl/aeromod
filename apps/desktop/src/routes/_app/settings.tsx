@@ -8,7 +8,7 @@ import { Button } from "@aeromod/ui/components/button";
 import { Switch } from "@aeromod/ui/components/switch";
 import { Input } from "@aeromod/ui/components/input";
 import { ModeToggle } from "@/components/mode-toggle";
-import { useGetSettings, useUpdateSetting } from "@/hooks/settings";
+import { useGetSettings, useUpdateSetting } from "@/features/settings/hooks";
 
 export const Route = createFileRoute("/_app/settings")({
   component: Settings,

@@ -1,10 +1,5 @@
-import { ipc } from "./ipc";
-
-export interface AppSettings {
-  addons_dir: string;
-  community_dir: string;
-  auto_enable: boolean;
-}
+import { ipc } from "@/lib/ipc";
+import type { AppSettings } from "./types";
 
 export const DEFAULT_SETTINGS = {
   auto_enable: true,

@@ -12,9 +12,9 @@ import {
   installAddon,
   renameAddon,
   uninstallAddon,
-  type VerificationResult,
   verifyAddon,
-} from "@/api/addon";
+} from "./api";
+import type { VerificationResult } from "./types";
 
 export const useGetAddon = (id: string) => {
   return useQuery({ queryKey: ["getAddon", id], queryFn: () => getAddon(id) });

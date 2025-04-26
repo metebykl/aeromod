@@ -16,7 +16,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@aeromod/ui/components/chart";
-import { useGetAddons } from "@/hooks/addon";
+import { useGetAddons } from "@/features/addons/hooks";
 import { humanFileSize } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/statistics")({

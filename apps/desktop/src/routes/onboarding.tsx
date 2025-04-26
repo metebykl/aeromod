@@ -10,8 +10,9 @@ import {
 
 import { Button } from "@aeromod/ui/components/button";
 import { Input } from "@aeromod/ui/components/input";
-import { type AppSettings, DEFAULT_SETTINGS } from "@/api/settings";
-import { useCompleteOnboarding } from "@/hooks/onboarding";
+import { DEFAULT_SETTINGS } from "@/features/settings/api";
+import type { AppSettings } from "@/features/settings/types";
+import { useCompleteOnboarding } from "@/features/onboarding/hooks";
 
 export const Route = createFileRoute("/onboarding")({
   component: Onboarding,

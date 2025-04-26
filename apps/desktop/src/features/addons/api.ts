@@ -1,14 +1,5 @@
-import { ipc } from "./ipc";
-
-export interface Addon {
-  id: string;
-  name: string;
-  creator: string;
-  version: string;
-  content_type: string;
-  enabled: boolean;
-  size: number;
-}
+import { ipc } from "@/lib/ipc";
+import type { Addon, VerificationResult } from "./types";
 
 export const getAddon = (id: string): Promise<Addon> => {
   return ipc("get_addon", { id });
@@ -41,17 +32,6 @@ export const renameAddon = (id: string, newId: string): Promise<void> => {
 export const revealAddon = (id: string): Promise<void> => {
   return ipc("reveal_addon", { id });
 };
-
-export interface VerificationResult {
-  verified: boolean;
-  files: VerificationNode[];
-}
-
-export interface VerificationNode {
-  status: "Ok" | "SizeMismatch" | "NotFound";
-  path: string;
-  size: number;
-}
 
 export const verifyAddon = (id: string): Promise<VerificationResult> => {
   return ipc("verify_addon", { id });

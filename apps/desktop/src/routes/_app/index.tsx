@@ -20,7 +20,8 @@ import {
   DropdownMenuTrigger,
 } from "@aeromod/ui/components/dropdown-menu";
 import { Input } from "@aeromod/ui/components/input";
-import { type Addon, revealAddon } from "@/api/addon";
+import { revealAddon } from "@/features/addons/api";
+import type { Addon } from "@/features/addons/types";
 import { Hint } from "@/components/hint";
 import {
   useDisableAddon,
@@ -29,7 +30,7 @@ import {
   useInstallAddon,
   useRenameAddon,
   useUninstallAddon,
-} from "@/hooks/addon";
+} from "@/features/addons/hooks";
 import { useConfirm } from "@/hooks/use-confirm";
 import { usePrompt } from "@/hooks/use-prompt";
 

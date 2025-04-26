@@ -4,7 +4,8 @@ import {
   useQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { type AppSettings, getSettings, updateSetting } from "@/api/settings";
+import { getSettings, updateSetting } from "./api";
+import type { AppSettings } from "./types";
 
 export const useGetSettings = () => {
   return useQuery({ queryKey: ["getSettings"], queryFn: getSettings });
