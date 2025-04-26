@@ -10,8 +10,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@aeromod/ui/components/select";
-import type { VerificationNode } from "@/api/addon";
-import { useGetAddons, useVerifyAddon } from "@/hooks/addon";
+import type { VerificationNode } from "@/features/addons/types";
+import { useGetAddons, useVerifyAddon } from "@/features/addons/hooks";
 import { humanFileSize } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/verify")({

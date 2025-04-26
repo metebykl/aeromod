@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { getOnboardingStatus } from "@/api/onboarding";
+import { getOnboardingStatus } from "@/features/onboarding/api";
 import { Sidebar } from "@/components/sidebar";
 
 export const Route = createFileRoute("/_app")({

@@ -8,7 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@aeromod/ui/components/breadcrumb";
-import { useGetAddon } from "@/hooks/addon";
+import { useGetAddon } from "@/features/addons/hooks";
 
 export const Route = createFileRoute("/_app/addons/$addonId")({
   component: Addon,
