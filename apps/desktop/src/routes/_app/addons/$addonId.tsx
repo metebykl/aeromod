@@ -1,5 +1,15 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { AlertCircleIcon, Loader2Icon } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+  AlertCircleIcon,
+  FolderSymlinkIcon,
+  Loader2Icon,
+  PencilIcon,
+  Trash2Icon,
+} from "lucide-react";
+import { toast } from "sonner";
+
+import { Button } from "@aeromod/ui/components/button";
+import { Switch } from "@aeromod/ui/components/switch";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,7 +18,19 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@aeromod/ui/components/breadcrumb";
-import { useGetAddon } from "@/features/addons/hooks";
+import {
+  useDisableAddon,
+  useEnableAddon,
+  useGetAddon,
+  useGetAddonThumbnail,
+  useRenameAddon,
+  useUninstallAddon,
+} from "@/features/addons/hooks";
+import type { Addon } from "@/features/addons/types";
+import { revealAddon } from "@/features/addons/api";
+import { useConfirm } from "@/hooks/use-confirm";
+import { usePrompt } from "@/hooks/use-prompt";
+import { humanFileSize } from "@/lib/utils";
 
 export const Route = createFileRoute("/_app/addons/$addonId")({
   component: Addon,
@@ -16,7 +38,68 @@ export const Route = createFileRoute("/_app/addons/$addonId")({
 
 function Addon() {
   const { addonId } = Route.useParams();
-  const { data: addon, isPending, isError } = useGetAddon(addonId);
+  const navigate = useNavigate();
+
+  const { data: addon, isPending, isError, refetch } = useGetAddon(addonId);
+  const {
+    data: thumbnail,
+    isPending: isPendingThumbnail,
+    isError: isErrorThumbnail,
+  } = useGetAddonThumbnail(addonId, { retry: false });
+
+  const [ConfirmDialog, confirm] = useConfirm();
+  const [PromptDialog, prompt] = usePrompt();
+
+  const enable = useEnableAddon({
+    onSuccess: () => {
+      toast.success("Addon enabled.");
+      refetch();
+    },
+  });
+
+  const disable = useDisableAddon({
+    onSuccess: () => {
+      toast.success("Addon disabled.");
+      refetch();
+    },
+  });
+
+  const uninstall = useUninstallAddon({
+    onSuccess: () => {
+      toast.success("Addon uninstalled.");
+      refetch();
+      navigate({ to: "/" });
+    },
+  });
+
+  const rename = useRenameAddon({
+    onSuccess: () => {
+      toast.success("Addon renamed.");
+      refetch();
+    },
+  });
+
+  const handleUninstall = async (id: Addon["id"]) => {
+    const ok = await confirm({
+      title: `Are you sure?`,
+      description: `This action cannot be undone. This will permanently uninstall ${id}.`,
+    });
+
+    if (ok) {
+      uninstall.mutate(id);
+    }
+  };
+
+  const handleRename = async (id: Addon["id"]) => {
+    const name = await prompt({
+      title: "Rename addon",
+      description: "Specify a new identifier for the addon.",
+      initialValue: id,
+    });
+
+    rename.mutate({ id: id, newId: name });
+    navigate({ to: "/addons/$addonId", params: { addonId: name } });
+  };
 
   if (isPending) {
     return (
@@ -80,21 +163,71 @@ function Addon() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="flex w-full items-center justify-between">
-        <div>
-          <h1 className="text-xl">{addon.name}</h1>
-          <p className="text-muted-foreground text-sm">{addon.creator}</p>
+      <div className="flex w-full justify-between">
+        <div className="flex items-center gap-x-6">
+          <div className="flex flex-col">
+            <h1 className="text-2xl font-semibold">{addon.name}</h1>
+            <p className="text-muted-foreground">by {addon.creator}</p>
+          </div>
+          <Switch
+            checked={addon.enabled}
+            onCheckedChange={(checked) => {
+              if (checked) {
+                enable.mutate(addon.id);
+              } else {
+                disable.mutate(addon.id);
+              }
+            }}
+          />
         </div>
         <div className="flex items-center gap-x-2">
-          <div className="text-muted-foreground px-3 py-2 font-mono">
-            {addon.version}
-          </div>
-          <div className="bg-muted text-muted-foreground rounded border px-3 py-2 text-sm">
-            {addon.content_type}
-          </div>
+          <Button variant="outline" onClick={() => handleRename(addon.id)}>
+            <PencilIcon /> Rename
+          </Button>
+          <Button variant="outline" onClick={() => revealAddon(addon.id)}>
+            <FolderSymlinkIcon /> Reveal
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={() => handleUninstall(addon.id)}
+          >
+            <Trash2Icon /> Uninstall
+          </Button>
         </div>
       </div>
-      {/* TODO: display addon thumbnail and metadata */}
+      <div className="flex w-full justify-between py-4">
+        <div>
+          <div className="flex items-center gap-x-2">
+            <p className="text-muted-foreground">Id</p>
+            <span>{addon.id}</span>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <p className="text-muted-foreground">Version</p>
+            <span>v{addon.version}</span>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <p className="text-muted-foreground">Type</p>
+            <span>{addon.content_type}</span>
+          </div>
+          <div className="flex items-center gap-x-2">
+            <p className="text-muted-foreground">Size</p>
+            <span>{humanFileSize(addon.size)}</span>
+          </div>
+        </div>
+        <div className="h-[170px] w-[412px] select-none">
+          {thumbnail && <img className="size-full" src={thumbnail} />}
+          {isPendingThumbnail && (
+            <div className="bg-muted size-full animate-pulse"></div>
+          )}
+          {isErrorThumbnail && (
+            <div className="bg-muted flex size-full items-center justify-center">
+              <span className="text-muted-foreground">No Thumbnail</span>
+            </div>
+          )}
+        </div>
+      </div>
+      <ConfirmDialog />
+      <PromptDialog />
     </div>
   );
 }

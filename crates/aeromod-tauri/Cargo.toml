@@ -22,5 +22,6 @@ anyhow.workspace = true
 tauri-plugin-dialog = "2"
 walkdir = "2.5.0"
 tempfile = "3.19.1"
+base64 = "0.22.1"
 
 aeromod-fs.workspace = true

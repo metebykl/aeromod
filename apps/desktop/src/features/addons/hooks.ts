@@ -1,5 +1,6 @@
 import {
   type MutateOptions,
+  type QueryOptions,
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
@@ -9,6 +10,7 @@ import {
   enableAddon,
   getAddon,
   getAddons,
+  getAddonThumbnail,
   installAddon,
   renameAddon,
   uninstallAddon,
@@ -18,6 +20,17 @@ import type { VerificationResult } from "./types";
 
 export const useGetAddon = (id: string) => {
   return useQuery({ queryKey: ["getAddon", id], queryFn: () => getAddon(id) });
+};
+
+export const useGetAddonThumbnail = (
+  id: string,
+  options?: QueryOptions<string>
+) => {
+  return useQuery({
+    queryKey: ["getAddonThumbnail", id],
+    queryFn: () => getAddonThumbnail(id),
+    ...options,
+  });
 };
 
 export const useGetAddons = () => {

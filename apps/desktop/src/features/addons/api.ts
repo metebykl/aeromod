@@ -36,3 +36,7 @@ export const revealAddon = (id: string): Promise<void> => {
 export const verifyAddon = (id: string): Promise<VerificationResult> => {
   return ipc("verify_addon", { id });
 };
+
+export const getAddonThumbnail = async (id: string): Promise<string> => {
+  return ipc("get_addon_thumbnail", { id });
+};

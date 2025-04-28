@@ -43,6 +43,7 @@ pub fn run() {
     app::rename_addon,
     app::verify_addon,
     app::reveal_addon,
+    app::get_addon_thumbnail,
     app::get_settings,
     app::update_setting
   ]);
