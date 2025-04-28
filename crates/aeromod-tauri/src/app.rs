@@ -105,6 +105,15 @@ pub fn reveal_addon(app_handle: AppHandle, id: &str) -> Result<(), String> {
   Ok(())
 }
 
+#[tauri::command(async)]
+pub fn get_addon_thumbnail(
+  state: State<'_, Mutex<AppSettings>>,
+  id: &str,
+) -> Result<String, String> {
+  let state = state.lock().unwrap().clone();
+  addon::get_addon_thumbnail(&state, id).map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 pub fn get_onboarding_status(app_handle: AppHandle) -> Result<bool, String> {
   AppSettings::exists(&app_handle).map_err(|e| e.to_string())

@@ -3,6 +3,7 @@ use std::fs::File;
 use std::path::Path;
 
 use anyhow::{Context, Result, anyhow};
+use base64::prelude::{BASE64_STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
 use tempfile::tempdir;
 use walkdir::WalkDir;
@@ -274,4 +275,25 @@ pub fn verify_addon(settings: &AppSettings, id: &str) -> Result<VerificationResu
   }
 
   Ok(VerificationResult { verified, files })
+}
+
+pub fn get_addon_thumbnail(settings: &AppSettings, id: &str) -> Result<String> {
+  let addon_path = Path::new(&settings.addons_dir).join(id);
+  if !addon_path.exists() {
+    return Err(anyhow!("Addon '{}' not found in addons directory", id));
+  }
+
+  let thumbnail_path = WalkDir::new(addon_path.join("ContentInfo"))
+    .min_depth(2)
+    .max_depth(2)
+    .into_iter()
+    .filter_map(|entry| entry.ok())
+    .find(|entry| entry.file_type().is_file() && entry.file_name() == "Thumbnail.jpg")
+    .map(|entry| entry.path().to_path_buf())
+    .context(format!("Addon '{}' does not have a thumbnail", id))?;
+
+  let data: Vec<u8> = fs::read(thumbnail_path)?;
+  let base64_data = BASE64_STANDARD.encode(data);
+
+  Ok(format!("data:image/jpg;base64,{}", base64_data))
 }
