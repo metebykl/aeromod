@@ -7,8 +7,12 @@ import { toast } from "sonner";
 import { getSettings, updateSetting } from "./api";
 import type { AppSettings } from "./types";
 
+export const settingsKeys = {
+  all: ["settings"],
+};
+
 export const useGetSettings = () => {
-  return useQuery({ queryKey: ["getSettings"], queryFn: getSettings });
+  return useQuery({ queryKey: settingsKeys.all, queryFn: getSettings });
 };
 
 export const useUpdateSetting = <T extends keyof AppSettings>(
