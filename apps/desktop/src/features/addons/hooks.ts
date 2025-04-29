@@ -18,8 +18,17 @@ import {
 } from "./api";
 import type { VerificationResult } from "./types";
 
+export const addonsKeys = {
+  all: ["addons"],
+  addon: (id: string) => ["addon", id],
+  thumbnail: (id: string) => [...addonsKeys.addon(id), "thumbnail"],
+};
+
 export const useGetAddon = (id: string) => {
-  return useQuery({ queryKey: ["getAddon", id], queryFn: () => getAddon(id) });
+  return useQuery({
+    queryKey: addonsKeys.addon(id),
+    queryFn: () => getAddon(id),
+  });
 };
 
 export const useGetAddonThumbnail = (
@@ -27,14 +36,14 @@ export const useGetAddonThumbnail = (
   options?: QueryOptions<string>
 ) => {
   return useQuery({
-    queryKey: ["getAddonThumbnail", id],
+    queryKey: addonsKeys.thumbnail(id),
     queryFn: () => getAddonThumbnail(id),
     ...options,
   });
 };
 
 export const useGetAddons = () => {
-  return useQuery({ queryKey: ["getAddons"], queryFn: getAddons });
+  return useQuery({ queryKey: addonsKeys.all, queryFn: getAddons });
 };
 
 export const useInstallAddon = (
