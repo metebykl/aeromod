@@ -5,6 +5,7 @@ import {
   PackageCheckIcon,
   PieChartIcon,
   SettingsIcon,
+  WrenchIcon,
 } from "lucide-react";
 
 import { Button } from "@aeromod/ui/components/button";
@@ -26,6 +27,11 @@ const routes = [
     href: "/verify",
     icon: PackageCheckIcon,
     hint: "Verify Addons",
+  },
+  {
+    href: "/tools",
+    icon: WrenchIcon,
+    hint: "Sim Tools",
   },
 ];
 

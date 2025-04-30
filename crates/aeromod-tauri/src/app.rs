@@ -6,6 +6,7 @@ use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_opener::OpenerExt;
 
 use crate::common::addon;
+use crate::common::sim::SimManager;
 use crate::settings::AppSettings;
 
 #[tauri::command(async)]
@@ -180,4 +181,20 @@ pub fn update_setting(app_handle: AppHandle, key: &str, value: &str) -> Result<(
   settings.save(settings_path).map_err(|e| e.to_string())?;
 
   Ok(())
+}
+
+#[tauri::command(async)]
+pub fn clear_rolling_cache(state: State<'_, Mutex<AppSettings>>) -> Result<(), String> {
+  let state = state.lock().unwrap().clone();
+  SimManager::new(&state)
+    .clear_rolling_cache()
+    .map_err(|e| e.to_string())
+}
+
+#[tauri::command(async)]
+pub fn clear_scenery_indexes(state: State<'_, Mutex<AppSettings>>) -> Result<(), String> {
+  let state = state.lock().unwrap().clone();
+  SimManager::new(&state)
+    .clear_scenery_indexes()
+    .map_err(|e| e.to_string())
 }

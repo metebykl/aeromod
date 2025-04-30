@@ -44,6 +44,8 @@ pub fn run() {
     app::verify_addon,
     app::reveal_addon,
     app::get_addon_thumbnail,
+    app::clear_rolling_cache,
+    app::clear_scenery_indexes,
     app::get_settings,
     app::update_setting
   ]);

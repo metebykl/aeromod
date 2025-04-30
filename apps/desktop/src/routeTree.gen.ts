@@ -15,6 +15,7 @@ import { Route as OnboardingImport } from './routes/onboarding'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app/index'
 import { Route as AppVerifyImport } from './routes/_app/verify'
+import { Route as AppToolsImport } from './routes/_app/tools'
 import { Route as AppStatisticsImport } from './routes/_app/statistics'
 import { Route as AppSettingsImport } from './routes/_app/settings'
 import { Route as AppAddonsAddonIdImport } from './routes/_app/addons/$addonId'
@@ -41,6 +42,12 @@ const AppIndexRoute = AppIndexImport.update({
 const AppVerifyRoute = AppVerifyImport.update({
   id: '/verify',
   path: '/verify',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppToolsRoute = AppToolsImport.update({
+  id: '/tools',
+  path: '/tools',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -94,6 +101,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppStatisticsImport
       parentRoute: typeof AppImport
     }
+    '/_app/tools': {
+      id: '/_app/tools'
+      path: '/tools'
+      fullPath: '/tools'
+      preLoaderRoute: typeof AppToolsImport
+      parentRoute: typeof AppImport
+    }
     '/_app/verify': {
       id: '/_app/verify'
       path: '/verify'
@@ -123,6 +137,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppStatisticsRoute: typeof AppStatisticsRoute
+  AppToolsRoute: typeof AppToolsRoute
   AppVerifyRoute: typeof AppVerifyRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAddonsAddonIdRoute: typeof AppAddonsAddonIdRoute
@@ -131,6 +146,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppStatisticsRoute: AppStatisticsRoute,
+  AppToolsRoute: AppToolsRoute,
   AppVerifyRoute: AppVerifyRoute,
   AppIndexRoute: AppIndexRoute,
   AppAddonsAddonIdRoute: AppAddonsAddonIdRoute,
@@ -143,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/settings': typeof AppSettingsRoute
   '/statistics': typeof AppStatisticsRoute
+  '/tools': typeof AppToolsRoute
   '/verify': typeof AppVerifyRoute
   '/': typeof AppIndexRoute
   '/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -152,6 +169,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/settings': typeof AppSettingsRoute
   '/statistics': typeof AppStatisticsRoute
+  '/tools': typeof AppToolsRoute
   '/verify': typeof AppVerifyRoute
   '/': typeof AppIndexRoute
   '/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -163,6 +181,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/statistics': typeof AppStatisticsRoute
+  '/_app/tools': typeof AppToolsRoute
   '/_app/verify': typeof AppVerifyRoute
   '/_app/': typeof AppIndexRoute
   '/_app/addons/$addonId': typeof AppAddonsAddonIdRoute
@@ -175,6 +194,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/settings'
     | '/statistics'
+    | '/tools'
     | '/verify'
     | '/'
     | '/addons/$addonId'
@@ -183,6 +203,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/settings'
     | '/statistics'
+    | '/tools'
     | '/verify'
     | '/'
     | '/addons/$addonId'
@@ -192,6 +213,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/_app/settings'
     | '/_app/statistics'
+    | '/_app/tools'
     | '/_app/verify'
     | '/_app/'
     | '/_app/addons/$addonId'
@@ -227,6 +249,7 @@ export const routeTree = rootRoute
       "children": [
         "/_app/settings",
         "/_app/statistics",
+        "/_app/tools",
         "/_app/verify",
         "/_app/",
         "/_app/addons/$addonId"
@@ -241,6 +264,10 @@ export const routeTree = rootRoute
     },
     "/_app/statistics": {
       "filePath": "_app/statistics.tsx",
+      "parent": "/_app"
+    },
+    "/_app/tools": {
+      "filePath": "_app/tools.tsx",
       "parent": "/_app"
     },
     "/_app/verify": {
