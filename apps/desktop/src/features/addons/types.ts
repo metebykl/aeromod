@@ -18,3 +18,18 @@ export interface VerificationNode {
   path: string;
   size: number;
 }
+
+export interface InstallResult {
+  results: AddonInstallResult[];
+}
+
+export type AddonInstallResult =
+  | {
+      status: "success";
+      id: string;
+    }
+  | {
+      status: "failure";
+      file: string;
+      error: string;
+    };

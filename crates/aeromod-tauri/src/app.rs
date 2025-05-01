@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+use serde::Serialize;
 use tauri::{AppHandle, Manager, State};
 use tauri_plugin_dialog::DialogExt;
 use tauri_plugin_opener::OpenerExt;
@@ -25,22 +26,64 @@ pub fn get_addons(state: State<'_, Mutex<AppSettings>>) -> Result<Vec<addon::Add
   Ok(addons)
 }
 
+#[derive(Serialize)]
+#[serde(tag = "status", rename_all = "lowercase")]
+pub enum AddonInstallResult {
+  Success { id: String },
+  Failure { file: String, error: String },
+}
+
+#[derive(Serialize)]
+pub struct InstallResult {
+  pub results: Vec<AddonInstallResult>,
+}
+
 #[tauri::command(async)]
-pub fn install_addon(app_handle: AppHandle) -> Result<bool, String> {
+pub fn install_addon(app_handle: AppHandle) -> Result<InstallResult, String> {
   let state = app_handle.state::<Mutex<AppSettings>>();
   let settings = state.lock().unwrap().clone();
 
-  let addon_path = match app_handle.dialog().file().blocking_pick_file() {
-    Some(p) => p.into_path().map_err(|e| e.to_string())?,
-    None => return Ok(false),
+  let addons: Vec<PathBuf> = match app_handle.dialog().file().blocking_pick_files() {
+    Some(addons) => addons
+      .into_iter()
+      .map(|f| f.into_path().map_err(|e| e.to_string()))
+      .collect::<Result<_, _>>()?,
+    None => return Ok(InstallResult { results: vec![] }),
   };
 
-  let name = addon::install_addon(&settings, &addon_path).map_err(|e| e.to_string())?;
-  if settings.auto_enable {
-    addon::enable_addon(&settings, &name).map_err(|e| e.to_string())?;
+  let mut results = Vec::new();
+
+  for addon in addons {
+    let file_display = addon
+      .file_name()
+      .and_then(|n| n.to_str())
+      .unwrap_or("<unknown>")
+      .to_string();
+
+    match addon::install_addon(&settings, &addon) {
+      Ok(id) => {
+        if settings.auto_enable {
+          if let Err(e) = addon::enable_addon(&settings, &id) {
+            results.push(AddonInstallResult::Failure {
+              file: file_display,
+              error: e.to_string(),
+            });
+            continue;
+          }
+        }
+
+        results.push(AddonInstallResult::Success { id });
+      }
+      Err(e) => {
+        results.push(AddonInstallResult::Failure {
+          file: file_display,
+          error: e.to_string(),
+        });
+      }
+    }
   }
 
-  Ok(true)
+  Ok(InstallResult { results })
 }
 
 #[tauri::command(async)]

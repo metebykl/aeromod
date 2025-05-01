@@ -94,10 +94,7 @@ pub fn install_addon(settings: &AppSettings, src: &Path) -> Result<String> {
     }
   }
 
-  let addon_dir = addon_dir.context(format!(
-    "No manifest.json found in '{}'",
-    search_dir.display()
-  ))?;
+  let addon_dir = addon_dir.context("No manifest.json found")?;
 
   let id = addon_dir
     .file_name()
