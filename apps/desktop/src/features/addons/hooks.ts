@@ -16,7 +16,7 @@ import {
   uninstallAddon,
   verifyAddon,
 } from "./api";
-import type { VerificationResult } from "./types";
+import type { InstallResult, VerificationResult } from "./types";
 
 export const addonsKeys = {
   all: ["addons"],
@@ -47,7 +47,7 @@ export const useGetAddons = () => {
 };
 
 export const useInstallAddon = (
-  options?: MutateOptions<boolean, Error, void, unknown>
+  options?: MutateOptions<InstallResult, Error, void, unknown>
 ) => {
   return useMutation({
     mutationFn: installAddon,

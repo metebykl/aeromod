@@ -46,11 +46,39 @@ function Index() {
   } = useGetAddons();
 
   const install = useInstallAddon({
-    onSuccess: (done) => {
-      if (done) {
-        toast.success("Addon installed.");
-        refetchAddons();
+    onSuccess: ({ results }) => {
+      if (results.length === 0) return;
+
+      const successes = results.filter((r) => r.status === "success");
+      const failures = results.filter((r) => r.status === "failure");
+
+      if (successes.length > 0) {
+        if (successes.length === 1) {
+          toast.success(
+            `Addon "${successes[0].id}" was installed successfully.`
+          );
+        } else {
+          toast.success(
+            `${successes.length} addons were installed successfully: ${successes
+              .map((a) => `"${a.id}"`)
+              .join(", ")}.`
+          );
+        }
       }
+
+      if (failures.length > 0) {
+        if (failures.length === 1) {
+          toast.error(`Addon installation failed: ${failures[0].error}.`);
+        } else {
+          toast.error(
+            `${failures.length} addons failed to install: ${failures
+              .map((a) => `"${a.file}"`)
+              .join(", ")}.`
+          );
+        }
+      }
+
+      refetchAddons();
     },
   });
 

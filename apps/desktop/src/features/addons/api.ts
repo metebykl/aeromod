@@ -1,5 +1,5 @@
 import { ipc } from "@/lib/ipc";
-import type { Addon, VerificationResult } from "./types";
+import type { Addon, InstallResult, VerificationResult } from "./types";
 
 export const getAddon = (id: string): Promise<Addon> => {
   return ipc("get_addon", { id });
@@ -9,7 +9,7 @@ export const getAddons = (): Promise<Addon[]> => {
   return ipc("get_addons");
 };
 
-export const installAddon = (): Promise<boolean> => {
+export const installAddon = (): Promise<InstallResult> => {
   return ipc("install_addon");
 };
 
