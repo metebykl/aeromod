@@ -32,6 +32,7 @@ pub fn run() {
     .plugin(tauri_plugin_dialog::init());
 
   let app = builder.invoke_handler(tauri::generate_handler![
+    app::quit_app,
     app::get_onboarding_status,
     app::complete_onboarding,
     app::get_addon,
@@ -47,7 +48,13 @@ pub fn run() {
     app::clear_rolling_cache,
     app::clear_scenery_indexes,
     app::get_settings,
-    app::update_setting
+    app::update_setting,
+    app::create_preset,
+    app::list_presets,
+    app::get_preset,
+    app::apply_preset,
+    app::update_preset,
+    app::remove_preset
   ]);
   app
     .run(tauri::generate_context!())

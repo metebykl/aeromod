@@ -37,7 +37,7 @@ const routes = [
 
 export function Sidebar() {
   return (
-    <aside className="bg-background fixed left-0 top-0 flex h-screen w-16 flex-col justify-between border-r py-4">
+    <aside className="bg-background fixed left-0 top-7 flex h-[calc(100vh-2rem)] w-16 flex-col justify-between border-r py-4">
       <nav className="flex flex-col items-center gap-y-3">
         {routes.map((r) => (
           <Hint key={r.href} label={r.hint} side="right">
