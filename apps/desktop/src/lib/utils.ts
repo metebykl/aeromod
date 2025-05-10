@@ -4,6 +4,10 @@ export const quitApp = (): Promise<void> => {
   return ipc("quit_app");
 };
 
+export const showAbout = (): Promise<void> => {
+  return ipc("show_about");
+};
+
 export const humanFileSize = (
   bytes: number,
   si: boolean = true,

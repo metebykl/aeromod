@@ -7,7 +7,7 @@ import {
   MenubarSeparator,
   MenubarTrigger,
 } from "@aeromod/ui/components/menubar";
-import { quitApp } from "@/lib/utils";
+import { quitApp, showAbout } from "@/lib/utils";
 import { PresetMenu } from "./preset-menu";
 
 export function AppBar() {
@@ -26,6 +26,12 @@ export function AppBar() {
             </MenubarContent>
           </MenubarMenu>
           <PresetMenu />
+          <MenubarMenu>
+            <MenubarTrigger>Help</MenubarTrigger>
+            <MenubarContent>
+              <MenubarItem onSelect={() => showAbout()}>About</MenubarItem>
+            </MenubarContent>
+          </MenubarMenu>
         </Menubar>
       </div>
     </>

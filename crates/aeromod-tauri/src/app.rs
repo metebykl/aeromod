@@ -2,8 +2,10 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
 use serde::Serialize;
+use sysinfo::System;
 use tauri::{AppHandle, Manager, State};
-use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_clipboard_manager::ClipboardExt;
+use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 
 use crate::common::addon;
@@ -14,6 +16,31 @@ use crate::settings::AppSettings;
 #[tauri::command]
 pub fn quit_app(app_handle: AppHandle) {
   app_handle.exit(0);
+}
+
+#[tauri::command(async)]
+pub fn show_about(app_handle: AppHandle) {
+  let version = &app_handle.package_info().version;
+  let system_name = System::kernel_long_version();
+  let info = format!("Version: {}\nOS: {}", version, system_name);
+
+  let info_clone = info.clone();
+  let app_handle_clone = app_handle.clone();
+
+  app_handle
+    .dialog()
+    .message(info)
+    .kind(MessageDialogKind::Info)
+    .title("AeroMod")
+    .buttons(MessageDialogButtons::OkCancelCustom(
+      "Copy".to_string(),
+      "OK".to_string(),
+    ))
+    .show(move |result| {
+      if result {
+        let _ = app_handle_clone.clipboard().write_text(info_clone);
+      }
+    });
 }
 
 #[tauri::command(async)]

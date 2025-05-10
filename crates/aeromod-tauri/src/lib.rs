@@ -29,10 +29,12 @@ pub fn run() {
       Ok(())
     })
     .plugin(tauri_plugin_opener::init())
-    .plugin(tauri_plugin_dialog::init());
+    .plugin(tauri_plugin_dialog::init())
+    .plugin(tauri_plugin_clipboard_manager::init());
 
   let app = builder.invoke_handler(tauri::generate_handler![
     app::quit_app,
+    app::show_about,
     app::get_onboarding_status,
     app::complete_onboarding,
     app::get_addon,
