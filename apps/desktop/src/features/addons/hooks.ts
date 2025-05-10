@@ -1,10 +1,12 @@
 import {
   type MutateOptions,
+  queryOptions,
   type QueryOptions,
   useMutation,
   useQuery,
 } from "@tanstack/react-query";
 import { toast } from "sonner";
+import type { QueryConfig } from "@/lib/react-query";
 import {
   disableAddon,
   enableAddon,
@@ -42,8 +44,17 @@ export const useGetAddonThumbnail = (
   });
 };
 
-export const useGetAddons = () => {
-  return useQuery({ queryKey: addonsKeys.all, queryFn: getAddons });
+export const getAddonsOptions = () => {
+  return queryOptions({
+    queryKey: addonsKeys.all,
+    queryFn: getAddons,
+  });
+};
+
+export const useGetAddons = (
+  options?: QueryConfig<typeof getAddonsOptions>
+) => {
+  return useQuery({ ...getAddonsOptions(), ...options });
 };
 
 export const useInstallAddon = (

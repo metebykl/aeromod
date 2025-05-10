@@ -1,3 +1,9 @@
+import { ipc } from "./ipc";
+
+export const quitApp = (): Promise<void> => {
+  return ipc("quit_app");
+};
+
 export const humanFileSize = (
   bytes: number,
   si: boolean = true,

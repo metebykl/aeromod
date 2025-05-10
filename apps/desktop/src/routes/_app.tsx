@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import { getOnboardingStatus } from "@/features/onboarding/api";
+import { AppBar } from "@/components/app-bar";
 import { Sidebar } from "@/components/sidebar";
 
 export const Route = createFileRoute("/_app")({
@@ -15,8 +16,9 @@ export const Route = createFileRoute("/_app")({
 function Layout() {
   return (
     <>
+      <AppBar />
       <Sidebar />
-      <main className="h-screen pl-16">
+      <main className="h-screen pl-16 pt-7">
         <Outlet />
       </main>
     </>
