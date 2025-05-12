@@ -2,14 +2,14 @@ use std::fs;
 use std::fs::File;
 use std::path::Path;
 
+use aeromod_settings::AppSettings;
 use anyhow::{Context, Result, anyhow};
 use base64::prelude::{BASE64_STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
 use tempfile::tempdir;
 use walkdir::WalkDir;
 
-use crate::common::manifest;
-use crate::settings::AppSettings;
+use crate::manifest::Manifest;
 
 #[derive(Serialize, Deserialize)]
 pub struct Addon {
@@ -34,7 +34,7 @@ pub fn parse_addon(settings: &AppSettings, id: &str) -> Result<Addon> {
     return Err(anyhow!("Not a directory"));
   };
 
-  let manifest = manifest::parse_manifest(path.join("manifest.json"))?;
+  let manifest = Manifest::parse(path.join("manifest.json"))?;
   let enabled = Path::new(&settings.community_dir).join(id).exists();
 
   Ok(Addon {

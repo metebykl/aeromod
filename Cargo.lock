@@ -18,6 +18,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
 
 [[package]]
+name = "aeromod-core"
+version = "0.0.0"
+dependencies = [
+ "aeromod-fs",
+ "aeromod-settings",
+ "anyhow",
+ "base64 0.22.1",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "walkdir",
+]
+
+[[package]]
 name = "aeromod-fs"
 version = "0.0.0"
 dependencies = [
@@ -28,10 +42,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "aeromod-settings"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "aeromod-tauri"
 version = "0.0.0"
 dependencies = [
+ "aeromod-core",
  "aeromod-fs",
+ "aeromod-settings",
  "anyhow",
  "base64 0.22.1",
  "serde",
