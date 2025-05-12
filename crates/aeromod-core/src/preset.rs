@@ -28,7 +28,7 @@ impl Preset {
         if should_be_enabled {
           let _ = addon::enable_addon(settings, &a.id);
         } else {
-          let _ = addon::disable_addon(settings, &a.id)?;
+          let _ = addon::disable_addon(settings, &a.id);
         }
       }
     }

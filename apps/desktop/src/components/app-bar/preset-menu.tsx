@@ -39,7 +39,7 @@ export function PresetMenu() {
   });
   const applyPreset = useApplyPreset({
     onSuccess: () => {
-      toast.success("Preset created successfully.");
+      toast.success("Preset applied successfully.");
       queryClient.refetchQueries({ queryKey: addonsKeys.all });
     },
   });
