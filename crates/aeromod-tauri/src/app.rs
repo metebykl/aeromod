@@ -1,6 +1,8 @@
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+use aeromod_core::{addon, preset, sim};
+use aeromod_settings::AppSettings;
 use serde::Serialize;
 use sysinfo::System;
 use tauri::{AppHandle, Manager, State};
@@ -8,10 +10,7 @@ use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 
-use crate::common::addon;
-use crate::common::preset::{Preset, PresetManager};
-use crate::common::sim::SimManager;
-use crate::settings::AppSettings;
+use crate::settings;
 
 #[tauri::command]
 pub fn quit_app(app_handle: AppHandle) {
@@ -193,17 +192,17 @@ pub fn get_addon_thumbnail(
 
 #[tauri::command]
 pub fn get_onboarding_status(app_handle: AppHandle) -> Result<bool, String> {
-  AppSettings::exists(&app_handle).map_err(|e| e.to_string())
+  settings::app_settings_exists(&app_handle).map_err(|e| e.to_string())
 }
 
 #[tauri::command]
 pub fn complete_onboarding(app_handle: AppHandle, settings: AppSettings) -> Result<(), String> {
-  let exists = AppSettings::exists(&app_handle).map_err(|e| e.to_string())?;
+  let exists = settings::app_settings_exists(&app_handle).map_err(|e| e.to_string())?;
   if exists {
     return Err(String::from("Onboarding already completed"));
   }
 
-  let path = AppSettings::path(&app_handle).map_err(|e| e.to_string())?;
+  let path = settings::get_app_settings_path(&app_handle).map_err(|e| e.to_string())?;
   settings.create(path).map_err(|e| e.to_string())?;
 
   app_handle.manage(Mutex::new(settings));
@@ -253,7 +252,7 @@ pub fn update_setting(app_handle: AppHandle, key: &str, value: &str) -> Result<(
     _ => return Err(format!("Unknown setting key '{}'", key)),
   }
 
-  let settings_path = AppSettings::path(&app_handle).map_err(|e| e.to_string())?;
+  let settings_path = settings::get_app_settings_path(&app_handle).map_err(|e| e.to_string())?;
   settings.save(settings_path).map_err(|e| e.to_string())?;
 
   Ok(())
@@ -262,7 +261,7 @@ pub fn update_setting(app_handle: AppHandle, key: &str, value: &str) -> Result<(
 #[tauri::command(async)]
 pub fn clear_rolling_cache(state: State<'_, Mutex<AppSettings>>) -> Result<(), String> {
   let state = state.lock().unwrap().clone();
-  SimManager::new(&state)
+  sim::SimManager::new(&state)
     .clear_rolling_cache()
     .map_err(|e| e.to_string())
 }
@@ -270,7 +269,7 @@ pub fn clear_rolling_cache(state: State<'_, Mutex<AppSettings>>) -> Result<(), S
 #[tauri::command(async)]
 pub fn clear_scenery_indexes(state: State<'_, Mutex<AppSettings>>) -> Result<(), String> {
   let state = state.lock().unwrap().clone();
-  SimManager::new(&state)
+  sim::SimManager::new(&state)
     .clear_scenery_indexes()
     .map_err(|e| e.to_string())
 }
@@ -284,25 +283,25 @@ fn get_presets_dir(app_handle: &AppHandle) -> Result<PathBuf, String> {
 }
 
 #[tauri::command(async)]
-pub fn create_preset(app_handle: AppHandle, preset: Preset) -> Result<(), String> {
+pub fn create_preset(app_handle: AppHandle, preset: preset::Preset) -> Result<(), String> {
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.create_preset(preset).map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
-pub fn list_presets(app_handle: AppHandle) -> Result<Vec<Preset>, String> {
+pub fn list_presets(app_handle: AppHandle) -> Result<Vec<preset::Preset>, String> {
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.list_presets().map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
-pub fn get_preset(app_handle: AppHandle, id: &str) -> Result<Preset, String> {
+pub fn get_preset(app_handle: AppHandle, id: &str) -> Result<preset::Preset, String> {
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.get_preset(id).map_err(|e| e.to_string())
 }
@@ -313,16 +312,16 @@ pub fn apply_preset(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let settings = state.lock().unwrap().clone();
 
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   let preset = manager.get_preset(id).map_err(|e| e.to_string())?;
   preset.apply(&settings).map_err(|e| e.to_string())
 }
 
 #[tauri::command(async)]
-pub fn update_preset(app_handle: AppHandle, preset: Preset) -> Result<(), String> {
+pub fn update_preset(app_handle: AppHandle, preset: preset::Preset) -> Result<(), String> {
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.update_preset(preset).map_err(|e| e.to_string())
 }
@@ -330,7 +329,7 @@ pub fn update_preset(app_handle: AppHandle, preset: Preset) -> Result<(), String
 #[tauri::command(async)]
 pub fn remove_preset(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let presets_dir = get_presets_dir(&app_handle)?;
-  let manager = PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
+  let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.remove_preset(id).map_err(|e| e.to_string())
 }

@@ -1,12 +1,10 @@
 use std::fs;
 use std::sync::Mutex;
 
+use aeromod_settings::AppSettings;
 use tauri::Manager;
 
-use settings::AppSettings;
-
 mod app;
-mod common;
 mod settings;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -15,12 +13,12 @@ pub fn run() {
     .setup(|app| {
       let app_handle = app.app_handle();
 
-      let config_dir = AppSettings::config_dir(app_handle).expect("missing config dir");
+      let config_dir = settings::get_aeromod_config_dir(app_handle).expect("missing config dir");
       fs::create_dir_all(&config_dir).expect("failed to create config dir");
 
-      let exists = AppSettings::exists(app_handle).unwrap();
+      let exists = settings::app_settings_exists(app_handle).unwrap();
       if exists {
-        let settings_path = AppSettings::path(app_handle).unwrap();
+        let settings_path = settings::get_app_settings_path(app_handle).unwrap();
         let settings = AppSettings::load(settings_path).expect("failed to load settings");
 
         app.manage(Mutex::new(settings));

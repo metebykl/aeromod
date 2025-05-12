@@ -22,9 +22,11 @@ pub struct Dependency {
   pub package_version: String,
 }
 
-pub fn parse_manifest<P: AsRef<Path>>(path: P) -> Result<Manifest> {
-  let file = File::open(path)?;
-  let reader = BufReader::new(file);
-  let manifest: Manifest = serde_json::from_reader(reader)?;
-  Ok(manifest)
+impl Manifest {
+  pub fn parse<P: AsRef<Path>>(path: P) -> Result<Self> {
+    let file = File::open(path)?;
+    let reader = BufReader::new(file);
+    let manifest: Manifest = serde_json::from_reader(reader)?;
+    Ok(manifest)
+  }
 }

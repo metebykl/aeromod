@@ -3,12 +3,11 @@ use std::fs;
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
+use aeromod_settings::AppSettings;
 use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 
-use crate::settings::AppSettings;
-
-use crate::common::addon;
+use crate::addon;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Preset {

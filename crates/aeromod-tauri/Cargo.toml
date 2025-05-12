@@ -18,7 +18,7 @@ tauri = { version = "2", features = [] }
 tauri-plugin-opener = "2"
 tauri-plugin-clipboard-manager = "2.2.2"
 serde.workspace = true
-serde_json = "1"
+serde_json.workspace = true
 anyhow.workspace = true
 tauri-plugin-dialog = "2"
 walkdir = "2.5.0"
@@ -26,4 +26,6 @@ tempfile = "3.19.1"
 base64 = "0.22.1"
 sysinfo = "0.35.0"
 
+aeromod-core.workspace = true
 aeromod-fs.workspace = true
+aeromod-settings.workspace = true

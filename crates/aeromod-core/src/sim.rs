@@ -1,9 +1,8 @@
 use std::fs;
 use std::path::PathBuf;
 
+use aeromod_settings::AppSettings;
 use anyhow::{Context, Result, bail};
-
-use crate::settings::AppSettings;
 
 pub struct SimManager<'a> {
   settings: &'a AppSettings,
