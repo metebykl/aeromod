@@ -25,7 +25,7 @@ function Onboarding() {
   const [settings, setSettings] = useState<AppSettings>({
     addons_dir: "",
     community_dir: "",
-    auto_enable: DEFAULT_SETTINGS.auto_enable,
+    ...DEFAULT_SETTINGS,
   });
 
   const { mutate, isPending } = useCompleteOnboarding({

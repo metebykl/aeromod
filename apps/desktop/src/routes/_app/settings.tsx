@@ -85,6 +85,23 @@ function Settings() {
             }}
           />
         </div>
+        <div className="flex w-full items-center justify-between">
+          <div>
+            <h3 className="font-medium">Auto Clear Scenery Indexes</h3>
+            <p className="text-muted-foreground text-sm">
+              Automatically clear scenery indexes after modifications.
+            </p>
+          </div>
+          <Switch
+            checked={settings.auto_clear_scenery_indexes}
+            onCheckedChange={(checked) => {
+              updateMutation.mutate({
+                key: "auto_clear_scenery_indexes",
+                value: checked,
+              });
+            }}
+          />
+        </div>
         <SettingsItemPath
           name="Addons Directory"
           description="The directory where downloaded addons are stored."

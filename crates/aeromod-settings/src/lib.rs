@@ -5,11 +5,18 @@ use std::path::{Path, PathBuf};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
+fn yes() -> bool {
+  true
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct AppSettings {
   pub addons_dir: PathBuf,
   pub community_dir: PathBuf,
+  #[serde(default = "yes")]
   pub auto_enable: bool,
+  #[serde(default)]
+  pub auto_clear_scenery_indexes: bool,
 }
 
 impl AppSettings {
