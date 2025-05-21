@@ -115,6 +115,10 @@ pub fn install_addon(app_handle: AppHandle) -> Result<InstallResult, String> {
     }
   }
 
+  if settings.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&settings).clear_scenery_indexes();
+  }
+
   Ok(InstallResult { results })
 }
 
@@ -122,6 +126,10 @@ pub fn install_addon(app_handle: AppHandle) -> Result<InstallResult, String> {
 pub fn enable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
   let state = state.lock().unwrap().clone();
   addon::enable_addon(&state, id).map_err(|e| e.to_string())?;
+
+  if state.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&state).clear_scenery_indexes();
+  }
 
   Ok(())
 }
@@ -131,6 +139,10 @@ pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(
   let state = state.lock().unwrap().clone();
   addon::disable_addon(&state, id).map_err(|e| e.to_string())?;
 
+  if state.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&state).clear_scenery_indexes();
+  }
+
   Ok(())
 }
 
@@ -138,6 +150,10 @@ pub fn disable_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(
 pub fn uninstall_addon(state: State<'_, Mutex<AppSettings>>, id: &str) -> Result<(), String> {
   let state = state.lock().unwrap().clone();
   addon::uninstall_addon(&state, id).map_err(|e| e.to_string())?;
+
+  if state.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&state).clear_scenery_indexes();
+  }
 
   Ok(())
 }
@@ -150,6 +166,10 @@ pub fn rename_addon(
 ) -> Result<(), String> {
   let state = state.lock().unwrap().clone();
   addon::rename_addon(&state, id, new_id).map_err(|e| e.to_string())?;
+
+  if state.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&state).clear_scenery_indexes();
+  }
 
   Ok(())
 }
@@ -249,6 +269,18 @@ pub fn update_setting(app_handle: AppHandle, key: &str, value: &str) -> Result<(
         _ => return Err(format!("Invalid value for auto_enable '{}'", value)),
       };
     }
+    "auto_clear_scenery_indexes" => {
+      settings.auto_clear_scenery_indexes = match value {
+        "true" => true,
+        "false" => false,
+        _ => {
+          return Err(format!(
+            "Invalid value for auto_clear_scenery_indexes '{}'",
+            value
+          ));
+        }
+      };
+    }
     _ => return Err(format!("Unknown setting key '{}'", key)),
   }
 
@@ -315,7 +347,13 @@ pub fn apply_preset(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   let preset = manager.get_preset(id).map_err(|e| e.to_string())?;
-  preset.apply(&settings).map_err(|e| e.to_string())
+  preset.apply(&settings).map_err(|e| e.to_string())?;
+
+  if settings.auto_clear_scenery_indexes {
+    let _ = sim::SimManager::new(&settings).clear_scenery_indexes();
+  }
+
+  Ok(())
 }
 
 #[tauri::command(async)]

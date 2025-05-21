@@ -3,6 +3,7 @@ import type { AppSettings } from "./types";
 
 export const DEFAULT_SETTINGS = {
   auto_enable: true,
+  auto_clear_scenery_indexes: false,
 };
 
 export const getSettings = (): Promise<AppSettings> => {
