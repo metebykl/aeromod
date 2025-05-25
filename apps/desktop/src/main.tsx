@@ -16,7 +16,17 @@ const memoryHistory = createMemoryHistory({
   initialEntries: ["/"],
 });
 
-const router = createRouter({ routeTree, history: memoryHistory });
+const router = createRouter({
+  routeTree,
+  history: memoryHistory,
+  scrollRestoration: true,
+  getScrollRestorationKey: (location) => {
+    const paths = ["/"];
+    return paths.includes(location.pathname)
+      ? location.pathname
+      : location.state.key!;
+  },
+});
 
 const queryClient = new QueryClient();
 
