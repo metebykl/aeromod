@@ -18,7 +18,7 @@ pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
   let file = File::open(path)?;
   let mut reader = BufReader::new(file);
 
-  // Parse BGL File Header
+  // Parse BGL file header.
   let magic_number = reader.read_u32::<LittleEndian>()?;
   let header_size = reader.read_u32::<LittleEndian>()?;
   reader.seek(SeekFrom::Current(4))?;
@@ -31,7 +31,7 @@ pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
   println!("Size: {}", header_size);
   println!("Section Count: {}", section_count);
 
-  // Parse Sections
+  // Parse sections.
   let mut sections = Vec::with_capacity(section_count as usize);
   for _ in 0..section_count {
     sections.push(SectionHeader {
@@ -54,7 +54,7 @@ pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
     println!("| Subsection Offset: {}", section.subsection_offset);
     println!("| Total Subsection Size: {}", section.total_subsection_size);
 
-    // Parse Airport Subsections
+    // Parse airport subsections.
     if section.section_type == 0x3 {
       for i in 0..section.subsection_count {
         let subsection_pos =
@@ -72,7 +72,7 @@ pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
         println!("| | Data Offset: {}", data_offset);
         println!("| | Data Size: {}", data_size);
 
-        // Parse Records
+        // Parse subsection records.
         reader.seek(SeekFrom::Start(data_offset as u64))?;
         parse_airport(&mut reader)?;
 
@@ -102,6 +102,45 @@ fn calculate_lon_lat(lon_raw: u32, lat_raw: u32) -> (f64, f64) {
   (lon_deg, lat_deg)
 }
 
+fn calculate_icao_code(mut value: u32, is_airport_ident: bool) -> String {
+  // Airport identifiers are shifted left by 5 bits.
+  if is_airport_ident {
+    value >>= 5;
+  }
+
+  // If the initial value is 0, it represents a single blank space.
+  if value == 0 {
+    return " ".to_string();
+  }
+
+  let mut coded_chars: Vec<u32> = Vec::new();
+
+  // The decoding process uses modulo 38 to extract the character codes
+  // in reverse order.
+  while value > 0 {
+    let remainder = value % 38;
+    coded_chars.push(remainder);
+    value /= 38; // Integer division
+  }
+
+  // The character codes are in reverse order (L-to-R).
+  coded_chars
+    .iter()
+    .rev()
+    .map(|&code| {
+      match code {
+        0 => ' ',
+        // 0-9 => 2-11
+        2..=11 => char::from_u32('0' as u32 + (code - 2)).unwrap(),
+        // A-Z => 12-37
+        12..=37 => char::from_u32('A' as u32 + (code - 12)).unwrap(),
+        // 1 => '?'
+        _ => '?',
+      }
+    })
+    .collect()
+}
+
 fn parse_airport<R: Read + Seek>(reader: &mut R) -> io::Result<()> {
   let record_type = reader.read_u16::<LittleEndian>()?;
   let record_size = reader.read_u32::<LittleEndian>()?;
@@ -122,7 +161,9 @@ fn parse_airport<R: Read + Seek>(reader: &mut R) -> io::Result<()> {
   reader.seek(SeekFrom::Current(4))?; // towerLat
   reader.seek(SeekFrom::Current(4))?; // towerAlt
   reader.seek(SeekFrom::Current(4))?; // magvar
-  let ident = reader.read_u32::<LittleEndian>()?;
+  let ident = reader
+    .read_u32::<LittleEndian>()
+    .map(|i| calculate_icao_code(i, true))?;
 
   println!("| | AIRPORT");
 
@@ -144,7 +185,22 @@ mod tests {
 
   #[test]
   fn test_parse_airport_icao() {
-    let res = parse_bgl("../../test.bgl").unwrap();
+    let res = parse_bgl("../../test2.bgl").unwrap();
     assert_eq!(res, "XXXX");
+  }
+
+  #[test]
+  fn test_calculate_lon_lat() {
+    let (encoded_lon, encoded_lat) = (466970081, 145327076);
+    let (lon, lat) = calculate_lon_lat(encoded_lon, encoded_lat);
+    assert_eq!(lon, 28.751893490552902);
+    assert_eq!(lat, 41.275300830602646);
+  }
+
+  #[test]
+  fn test_calculate_icao_code() {
+    let encoded_icao = 0x27e6c41;
+    let icao = calculate_icao_code(encoded_icao, true);
+    assert_eq!(icao, "LTFM");
   }
 }
