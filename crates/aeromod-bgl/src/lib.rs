@@ -6,7 +6,15 @@ use std::path::Path;
 use anyhow::Result;
 use byteorder::{LittleEndian, ReadBytesExt};
 
-pub fn parse_airport_icao<P: AsRef<Path>>(path: P) -> Result<String> {
+struct SectionHeader {
+  section_type: u32,
+  subsection_size: u32,
+  subsection_count: u32,
+  subsection_offset: u32,
+  total_subsection_size: u32,
+}
+
+pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
   let file = File::open(path)?;
   let mut reader = BufReader::new(file);
 
@@ -24,27 +32,33 @@ pub fn parse_airport_icao<P: AsRef<Path>>(path: P) -> Result<String> {
   println!("Section Count: {}", section_count);
 
   // Parse Sections
+  let mut sections = Vec::with_capacity(section_count as usize);
   for _ in 0..section_count {
-    let section_type = reader.read_u32::<LittleEndian>()?;
-    let subsection_size = reader
-      .read_u32::<LittleEndian>()
-      .map(|s| calculate_subsection_header_size(s))?;
-    let subsection_count = reader.read_u32::<LittleEndian>()?;
-    let subsection_offset = reader.read_u32::<LittleEndian>()?;
-    let total_subsection_size = reader.read_u32::<LittleEndian>()?;
+    sections.push(SectionHeader {
+      section_type: reader.read_u32::<LittleEndian>()?,
+      subsection_size: reader
+        .read_u32::<LittleEndian>()
+        .map(|s| calculate_subsection_header_size(s))?,
+      subsection_count: reader.read_u32::<LittleEndian>()?,
+      subsection_offset: reader.read_u32::<LittleEndian>()?,
+      total_subsection_size: reader.read_u32::<LittleEndian>()?,
+    });
+  }
 
+  for section in sections {
     println!("\nSECTION");
 
-    println!("| Section Type: {:#x}", section_type);
-    println!("| Subsection Size: {}", subsection_size);
-    println!("| Subsection Count: {}", subsection_count);
-    println!("| Subsection Offset: {}", subsection_offset);
-    println!("| Total Subsection Size: {}", total_subsection_size);
+    println!("| Section Type: {:#x}", section.section_type);
+    println!("| Subsection Size: {}", section.subsection_size);
+    println!("| Subsection Count: {}", section.subsection_count);
+    println!("| Subsection Offset: {}", section.subsection_offset);
+    println!("| Total Subsection Size: {}", section.total_subsection_size);
 
     // Parse Airport Subsections
-    if section_type == 0x3 {
-      for i in 0..subsection_count {
-        let subsection_pos = subsection_offset as u64 + (i * subsection_size) as u64;
+    if section.section_type == 0x3 {
+      for i in 0..section.subsection_count {
+        let subsection_pos =
+          section.subsection_offset as u64 + (i * section.subsection_size) as u64;
         reader.seek(SeekFrom::Start(subsection_pos))?;
 
         reader.seek(SeekFrom::Current(4))?;
@@ -103,6 +117,13 @@ fn parse_airport<R: Read + Seek>(reader: &mut R) -> io::Result<()> {
   let lat = reader.read_u32::<LittleEndian>()?;
   let (lon, lat) = calculate_lon_lat(lon, lat);
 
+  reader.seek(SeekFrom::Current(4))?; // alt
+  reader.seek(SeekFrom::Current(4))?; // towerLon
+  reader.seek(SeekFrom::Current(4))?; // towerLat
+  reader.seek(SeekFrom::Current(4))?; // towerAlt
+  reader.seek(SeekFrom::Current(4))?; // magvar
+  let ident = reader.read_u32::<LittleEndian>()?;
+
   println!("| | AIRPORT");
 
   println!("| | | Record Type: {:#x}", record_type);
@@ -110,6 +131,7 @@ fn parse_airport<R: Read + Seek>(reader: &mut R) -> io::Result<()> {
   println!("| | | Runway Count: {}", runway_count);
   println!("| | | Lat: {}", lat);
   println!("| | | Lon: {}", lon);
+  println!("| | | Ident: {}", ident);
 
   println!("| | END AIRPORT");
 
@@ -122,7 +144,7 @@ mod tests {
 
   #[test]
   fn test_parse_airport_icao() {
-    let res = parse_airport_icao("../../test.bgl").unwrap();
+    let res = parse_bgl("../../test.bgl").unwrap();
     assert_eq!(res, "XXXX");
   }
 }
