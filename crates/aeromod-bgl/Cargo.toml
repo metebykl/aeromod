@@ -1,0 +1,10 @@
+[package]
+name = "aeromod-bgl"
+version = "0.0.0"
+authors = ["metebykl"]
+edition = "2021"
+publish = false
+
+[dependencies]
+anyhow.workspace = true
+byteorder = "1.5"
