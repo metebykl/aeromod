@@ -10,3 +10,4 @@ anyhow = "1.0.97"
 aeromod-core = { path = "crates/aeromod-core" }
 aeromod-fs = { path = "crates/aeromod-fs" }
 aeromod-settings = { path = "crates/aeromod-settings" }
+aeromod-bgl = { path = "crates/aeromod-bgl" }
