@@ -3,7 +3,6 @@ use std::io;
 use std::io::{BufReader, Read, Seek, SeekFrom};
 use std::path::Path;
 
-use anyhow::Result;
 use byteorder::{LittleEndian, ReadBytesExt};
 
 struct SectionHeader {
@@ -11,25 +10,186 @@ struct SectionHeader {
   subsection_size: u32,
   subsection_count: u32,
   subsection_offset: u32,
-  total_subsection_size: u32,
+  _total_subsection_size: u32,
 }
 
-pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
+pub enum FSSectType {
+  Undefined,
+  Airport,
+  VorIls,
+  Ndb,
+  Marker,
+  Boundary,
+  Waypoint,
+  Geopol,
+  SceneryObject,
+  NameList,
+  VorIcaoIndex,
+  NdbIcaoIndex,
+  WaypointIcaoIndex,
+  ModelData,
+  AirportSummary,
+  ExclusionRectangle,
+  TimeZone,
+  ModelIndex,
+  LandmarkLocation,
+  CVX,
+  DEM,
+  Landclass,
+  Waterclass,
+  Regions,
+  Population,
+  LCLookup,
+  Seasons,
+}
+
+impl From<u32> for FSSectType {
+  fn from(value: u32) -> Self {
+    match value {
+      0x3 => FSSectType::Airport,
+      0x13 => FSSectType::VorIls,
+      0x17 => FSSectType::Ndb,
+      0x18 => FSSectType::Marker,
+      0x20 => FSSectType::Boundary,
+      0x22 => FSSectType::Waypoint,
+      0x23 => FSSectType::Geopol,
+      0x25 => FSSectType::SceneryObject,
+      0x27 => FSSectType::NameList,
+      0x28 => FSSectType::VorIcaoIndex,
+      0x29 => FSSectType::NdbIcaoIndex,
+      0x2a => FSSectType::WaypointIcaoIndex,
+      0x2b => FSSectType::ModelData,
+      0x2c => FSSectType::AirportSummary,
+      0x2e => FSSectType::ExclusionRectangle,
+      0x2f => FSSectType::TimeZone,
+      0x30 => FSSectType::ModelIndex,
+      0x31 => FSSectType::LandmarkLocation,
+      0x65 => FSSectType::CVX,
+      0x67 => FSSectType::DEM,
+      0x68 => FSSectType::Landclass,
+      0x69 => FSSectType::Waterclass,
+      0x6a => FSSectType::Regions,
+      0x6c => FSSectType::Population,
+      0x6f => FSSectType::LCLookup,
+      0x78 => FSSectType::Seasons,
+      _ => FSSectType::Undefined,
+    }
+  }
+}
+
+pub enum FSDataType {
+  Undefined,
+  Airport,
+  GenericBuilding,
+  LibraryObject,
+  Windsock,
+  Effect,
+  TaxiwaySign,
+  Trigger,
+  ExtrusionBridge,
+  VorIls,
+  WorldScript,
+  CarParking,
+  Ndb,
+  Marker,
+  SimObject,
+  Boundary,
+  Waypoint,
+  Geopol,
+  SceneryObject,
+  NameList,
+  VorIcaoIndex,
+  NdbIcaoIndex,
+  WaypointIcaoIndex,
+  ModelData,
+  ExclusionRectangle,
+  TimeZone,
+  AirportSummary,
+  CVX,
+  DEM,
+  Landclass,
+  Waterclass,
+  Regions,
+  Population,
+  LCLookup,
+  Seasons,
+  DeleteNavigation,
+  DeleteAirportNavigation,
+  LandmarkLocation,
+}
+
+impl From<u32> for FSDataType {
+  fn from(value: u32) -> Self {
+    match value {
+      0x56 => FSDataType::Airport,
+      0x0A => FSDataType::GenericBuilding,
+      0x0B => FSDataType::LibraryObject,
+      0x0C => FSDataType::Windsock,
+      0x0D => FSDataType::Effect,
+      0x0E => FSDataType::TaxiwaySign,
+      0x10 => FSDataType::Trigger,
+      0x12 => FSDataType::ExtrusionBridge,
+      0x13 => FSDataType::VorIls,
+      0x15 => FSDataType::WorldScript,
+      0x16 => FSDataType::CarParking,
+      0x17 => FSDataType::Ndb,
+      0x18 => FSDataType::Marker,
+      0x19 => FSDataType::SimObject,
+      0x20 => FSDataType::Boundary,
+      0x22 => FSDataType::Waypoint,
+      0x23 => FSDataType::Geopol,
+      0x25 => FSDataType::SceneryObject,
+      0x27 => FSDataType::NameList,
+      0x28 => FSDataType::VorIcaoIndex,
+      0x29 => FSDataType::NdbIcaoIndex,
+      0x2a => FSDataType::WaypointIcaoIndex,
+      0x2b => FSDataType::ModelData,
+      0x2e => FSDataType::ExclusionRectangle,
+      0x2f => FSDataType::TimeZone,
+      0x32 => FSDataType::AirportSummary,
+      0x65 => FSDataType::CVX,
+      0x67 => FSDataType::DEM,
+      0x68 => FSDataType::Landclass,
+      0x69 => FSDataType::Waterclass,
+      0x6a => FSDataType::Regions,
+      0x6c => FSDataType::Population,
+      0x6f => FSDataType::LCLookup,
+      0x78 => FSDataType::Seasons,
+      0xDA => FSDataType::DeleteNavigation,
+      0xDB => FSDataType::DeleteAirportNavigation,
+      0xEA => FSDataType::LandmarkLocation,
+      _ => FSDataType::Undefined,
+    }
+  }
+}
+
+#[derive(Debug)]
+pub enum BglObject {
+  Airport(Airport),
+}
+
+#[derive(Debug)]
+pub struct Airport {
+  pub icao: String,
+  pub latitude: f64,
+  pub longitude: f64,
+  pub altitude: f64,
+  pub runway_count: u8,
+}
+
+pub fn parse_bgl<P: AsRef<Path>>(path: P) -> io::Result<Vec<BglObject>> {
   let file = File::open(path)?;
   let mut reader = BufReader::new(file);
+  let mut bgl_objects: Vec<BglObject> = Vec::new();
 
   // Parse BGL file header.
-  let magic_number = reader.read_u32::<LittleEndian>()?;
-  let header_size = reader.read_u32::<LittleEndian>()?;
+  let _magic_number = reader.read_u32::<LittleEndian>()?;
+  let _header_size = reader.read_u32::<LittleEndian>()?;
   reader.seek(SeekFrom::Current(4))?;
   reader.seek(SeekFrom::Current(4))?;
   reader.seek(SeekFrom::Current(4))?;
   let section_count = reader.read_u32::<LittleEndian>()?;
   reader.seek(SeekFrom::Current(32))?;
-
-  println!("Magic Number: {}", magic_number);
-  println!("Size: {}", header_size);
-  println!("Section Count: {}", section_count);
 
   // Parse sections.
   let mut sections = Vec::with_capacity(section_count as usize);
@@ -41,49 +201,73 @@ pub fn parse_bgl<P: AsRef<Path>>(path: P) -> Result<String> {
         .map(|s| calculate_subsection_header_size(s))?,
       subsection_count: reader.read_u32::<LittleEndian>()?,
       subsection_offset: reader.read_u32::<LittleEndian>()?,
-      total_subsection_size: reader.read_u32::<LittleEndian>()?,
+      _total_subsection_size: reader.read_u32::<LittleEndian>()?,
     });
   }
 
   for section in sections {
-    println!("\nSECTION");
-
-    println!("| Section Type: {:#x}", section.section_type);
-    println!("| Subsection Size: {}", section.subsection_size);
-    println!("| Subsection Count: {}", section.subsection_count);
-    println!("| Subsection Offset: {}", section.subsection_offset);
-    println!("| Total Subsection Size: {}", section.total_subsection_size);
+    let mut section_objects: Vec<BglObject> = Vec::new();
 
     // Parse airport subsections.
-    if section.section_type == 0x3 {
-      for i in 0..section.subsection_count {
-        let subsection_pos =
-          section.subsection_offset as u64 + (i * section.subsection_size) as u64;
-        reader.seek(SeekFrom::Start(subsection_pos))?;
+    for i in 0..section.subsection_count {
+      let subsection_pos = section.subsection_offset as u64 + (i * section.subsection_size) as u64;
+      reader.seek(SeekFrom::Start(subsection_pos))?;
 
-        reader.seek(SeekFrom::Current(4))?;
-        let record_count = reader.read_u32::<LittleEndian>()?;
-        let data_offset = reader.read_u32::<LittleEndian>()?;
-        let data_size = reader.read_u32::<LittleEndian>()?;
+      reader.seek(SeekFrom::Current(4))?;
+      let _record_count = reader.read_u32::<LittleEndian>()?;
+      let data_offset = reader.read_u32::<LittleEndian>()?;
+      let _data_size = reader.read_u32::<LittleEndian>()?;
 
-        println!("| SUBSECTION");
-
-        println!("| | Record Count: {}", record_count);
-        println!("| | Data Offset: {}", data_offset);
-        println!("| | Data Size: {}", data_size);
-
-        // Parse subsection records.
-        reader.seek(SeekFrom::Start(data_offset as u64))?;
-        parse_airport(&mut reader)?;
-
-        println!("| END SUBSECTION");
+      // Parse subsection records.
+      reader.seek(SeekFrom::Start(data_offset as u64))?;
+      match FSSectType::from(section.section_type) {
+        FSSectType::Airport => {
+          let airport = parse_airport_record(&mut reader)?;
+          section_objects.push(BglObject::Airport(airport));
+        }
+        _ => {}
       }
-    }
 
-    println!("END SECTION");
+      bgl_objects.append(&mut section_objects);
+    }
   }
 
-  Ok("XXXX".to_string())
+  Ok(bgl_objects)
+}
+
+fn parse_airport_record<R: Read + Seek>(reader: &mut R) -> io::Result<Airport> {
+  let _record_type = reader.read_u16::<LittleEndian>()?;
+  let _record_size = reader.read_u32::<LittleEndian>()?;
+
+  let runway_count = reader.read_u8()?;
+  reader.seek(SeekFrom::Current(1))?; // commCt
+  reader.seek(SeekFrom::Current(1))?; // startCt
+  reader.seek(SeekFrom::Current(1))?; // appCt
+  reader.seek(SeekFrom::Current(1))?; // legacyApronCt
+  reader.seek(SeekFrom::Current(1))?; // helipadCt
+
+  let lon_raw = reader.read_u32::<LittleEndian>()?;
+  let lat_raw = reader.read_u32::<LittleEndian>()?;
+  let (lon, lat) = calculate_lon_lat(lon_raw, lat_raw);
+
+  let alt_raw = reader.read_i32::<LittleEndian>()?;
+  let alt = alt_raw as f64 / 1000.0;
+  reader.seek(SeekFrom::Current(4))?; // towerLon
+  reader.seek(SeekFrom::Current(4))?; // towerLat
+  reader.seek(SeekFrom::Current(4))?; // towerAlt
+  reader.seek(SeekFrom::Current(4))?; // magvar
+
+  let ident = reader
+    .read_u32::<LittleEndian>()
+    .map(|i| calculate_icao_code(i, true))?;
+
+  Ok(Airport {
+    icao: ident,
+    latitude: lat,
+    longitude: lon,
+    altitude: alt,
+    runway_count,
+  })
 }
 
 fn calculate_subsection_header_size(value: u32) -> u32 {
@@ -141,53 +325,9 @@ fn calculate_icao_code(mut value: u32, is_airport_ident: bool) -> String {
     .collect()
 }
 
-fn parse_airport<R: Read + Seek>(reader: &mut R) -> io::Result<()> {
-  let record_type = reader.read_u16::<LittleEndian>()?;
-  let record_size = reader.read_u32::<LittleEndian>()?;
-
-  let runway_count = reader.read_u8()?;
-  reader.seek(SeekFrom::Current(1))?; // commCt
-  reader.seek(SeekFrom::Current(1))?; // startCt
-  reader.seek(SeekFrom::Current(1))?; // appCt
-  reader.seek(SeekFrom::Current(1))?; // legacyApronCt
-  reader.seek(SeekFrom::Current(1))?; // helipadCt
-
-  let lon = reader.read_u32::<LittleEndian>()?;
-  let lat = reader.read_u32::<LittleEndian>()?;
-  let (lon, lat) = calculate_lon_lat(lon, lat);
-
-  reader.seek(SeekFrom::Current(4))?; // alt
-  reader.seek(SeekFrom::Current(4))?; // towerLon
-  reader.seek(SeekFrom::Current(4))?; // towerLat
-  reader.seek(SeekFrom::Current(4))?; // towerAlt
-  reader.seek(SeekFrom::Current(4))?; // magvar
-  let ident = reader
-    .read_u32::<LittleEndian>()
-    .map(|i| calculate_icao_code(i, true))?;
-
-  println!("| | AIRPORT");
-
-  println!("| | | Record Type: {:#x}", record_type);
-  println!("| | | Record Size: {}", record_size);
-  println!("| | | Runway Count: {}", runway_count);
-  println!("| | | Lat: {}", lat);
-  println!("| | | Lon: {}", lon);
-  println!("| | | Ident: {}", ident);
-
-  println!("| | END AIRPORT");
-
-  Ok(())
-}
-
 #[cfg(test)]
 mod tests {
   use super::*;
-
-  #[test]
-  fn test_parse_airport_icao() {
-    let res = parse_bgl("../../test2.bgl").unwrap();
-    assert_eq!(res, "XXXX");
-  }
 
   #[test]
   fn test_calculate_lon_lat() {
