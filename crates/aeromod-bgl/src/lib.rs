@@ -163,12 +163,14 @@ impl From<u32> for FSDataType {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum BglObject {
   Airport(Airport),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Airport {
   pub icao: String,
   pub latitude: f64,

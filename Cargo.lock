@@ -22,12 +22,14 @@ name = "aeromod-bgl"
 version = "0.0.0"
 dependencies = [
  "byteorder",
+ "serde",
 ]
 
 [[package]]
 name = "aeromod-core"
 version = "0.0.0"
 dependencies = [
+ "aeromod-bgl",
  "aeromod-fs",
  "aeromod-settings",
  "anyhow",
