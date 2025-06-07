@@ -177,7 +177,7 @@ pub struct Airport {
   pub runway_count: u8,
 }
 
-pub fn parse_bgl<P: AsRef<Path>>(path: P) -> io::Result<Vec<BglObject>> {
+pub fn load_bgl_objects<P: AsRef<Path>>(path: P) -> io::Result<Vec<BglObject>> {
   let file = File::open(path)?;
   let mut reader = BufReader::new(file);
   let mut bgl_objects: Vec<BglObject> = Vec::new();
