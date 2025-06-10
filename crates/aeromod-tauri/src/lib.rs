@@ -81,7 +81,8 @@ pub fn run() {
     app::get_preset,
     app::apply_preset,
     app::update_preset,
-    app::remove_preset
+    app::remove_preset,
+    app::get_scenery_cache
   ]);
   app
     .run(tauri::generate_context!())

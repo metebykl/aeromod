@@ -2,6 +2,7 @@ import { openUrl } from "@tauri-apps/plugin-opener";
 import { Link } from "@tanstack/react-router";
 import {
   ListIcon,
+  MapIcon,
   PackageCheckIcon,
   PieChartIcon,
   SettingsIcon,
@@ -17,6 +18,11 @@ const routes = [
     href: "/",
     icon: ListIcon,
     hint: "Addons",
+  },
+  {
+    href: "/scenery",
+    icon: MapIcon,
+    hint: "Scenery Map",
   },
   {
     href: "/statistics",

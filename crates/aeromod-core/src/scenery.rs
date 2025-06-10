@@ -10,7 +10,7 @@ use walkdir::WalkDir;
 
 use crate::addon;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 pub struct SceneryCache {
   #[serde(skip)]
   path: PathBuf,
