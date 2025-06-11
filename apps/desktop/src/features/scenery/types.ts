@@ -1,8 +1,10 @@
 export interface SceneryCache {
-  airports: Airport[];
+  airports: SceneryAirport[];
 }
 
-export interface Airport {
+export interface SceneryAirport {
+  addon_id: string;
+  bgl_path: string;
   icao: string;
   latitude: number;
   longitude: number;

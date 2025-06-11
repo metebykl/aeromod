@@ -2,7 +2,7 @@ use std::fs::File;
 use std::io::{BufReader, BufWriter};
 use std::path::{Path, PathBuf};
 
-use aeromod_bgl::{Airport, BglObject, load_bgl_objects};
+use aeromod_bgl::{BglObject, load_bgl_objects};
 use aeromod_settings::AppSettings;
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -14,7 +14,18 @@ use crate::addon;
 pub struct SceneryCache {
   #[serde(skip)]
   path: PathBuf,
-  airports: Vec<Airport>,
+  airports: Vec<AirportScenery>,
+}
+
+#[derive(Clone, Serialize, Deserialize)]
+pub struct AirportScenery {
+  pub addon_id: String,
+  pub bgl_path: String,
+  pub icao: String,
+  pub latitude: f64,
+  pub longitude: f64,
+  pub altitude: f64,
+  pub runway_count: u8,
 }
 
 impl SceneryCache {
@@ -52,7 +63,7 @@ impl SceneryCache {
   pub fn build(&mut self, settings: &AppSettings) -> Result<()> {
     let addons = addon::get_addons(settings)?;
     for addon in addons {
-      let addon_path = &settings.addons_dir.join(addon.id);
+      let addon_path = &settings.addons_dir.join(&addon.id);
       for entry in WalkDir::new(addon_path)
         .into_iter()
         .filter_map(|e| e.ok())
@@ -69,7 +80,15 @@ impl SceneryCache {
         for obj in bgl_objects {
           match obj {
             BglObject::Airport(airport) => {
-              self.airports.push(airport);
+              self.airports.push(AirportScenery {
+                addon_id: addon.id.to_string(),
+                bgl_path: path.to_string_lossy().to_string(),
+                icao: airport.icao,
+                latitude: airport.latitude,
+                longitude: airport.longitude,
+                altitude: airport.altitude,
+                runway_count: airport.runway_count,
+              });
             }
           }
         }
@@ -79,7 +98,7 @@ impl SceneryCache {
     Ok(())
   }
 
-  pub fn all_airports(&self) -> &Vec<Airport> {
+  pub fn all_airports(&self) -> &Vec<AirportScenery> {
     &self.airports
   }
 
