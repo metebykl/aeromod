@@ -15,3 +15,4 @@ base64 = "0.22.1"
 
 aeromod-fs.workspace = true
 aeromod-settings.workspace = true
+aeromod-bgl = { workspace = true, features = ["serde"] }

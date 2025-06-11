@@ -1,6 +1,7 @@
 use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 
+use aeromod_core::scenery::SceneryCache;
 use aeromod_core::{addon, preset, sim};
 use aeromod_settings::AppSettings;
 use serde::Serialize;
@@ -10,7 +11,7 @@ use tauri_plugin_clipboard_manager::ClipboardExt;
 use tauri_plugin_dialog::{DialogExt, MessageDialogButtons, MessageDialogKind};
 use tauri_plugin_opener::OpenerExt;
 
-use crate::settings;
+use crate::{SceneryCacheState, settings};
 
 #[tauri::command]
 pub fn quit_app(app_handle: AppHandle) {
@@ -370,4 +371,12 @@ pub fn remove_preset(app_handle: AppHandle, id: &str) -> Result<(), String> {
   let manager = preset::PresetManager::new(presets_dir).map_err(|e| e.to_string())?;
 
   manager.remove_preset(id).map_err(|e| e.to_string())
+}
+
+#[tauri::command(async)]
+pub fn get_scenery_cache(
+  scenery_cache: State<'_, SceneryCacheState>,
+) -> Result<SceneryCache, String> {
+  let sc = scenery_cache.lock().map_err(|e| e.to_string())?;
+  Ok(sc.clone())
 }

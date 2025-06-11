@@ -18,6 +18,7 @@ import { Route as AppVerifyImport } from './routes/_app/verify'
 import { Route as AppToolsImport } from './routes/_app/tools'
 import { Route as AppStatisticsImport } from './routes/_app/statistics'
 import { Route as AppSettingsImport } from './routes/_app/settings'
+import { Route as AppSceneryImport } from './routes/_app/scenery'
 import { Route as AppAddonsAddonIdImport } from './routes/_app/addons/$addonId'
 
 // Create/Update Routes
@@ -63,6 +64,12 @@ const AppSettingsRoute = AppSettingsImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppSceneryRoute = AppSceneryImport.update({
+  id: '/scenery',
+  path: '/scenery',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AppAddonsAddonIdRoute = AppAddonsAddonIdImport.update({
   id: '/addons/$addonId',
   path: '/addons/$addonId',
@@ -86,6 +93,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingImport
       parentRoute: typeof rootRoute
+    }
+    '/_app/scenery': {
+      id: '/_app/scenery'
+      path: '/scenery'
+      fullPath: '/scenery'
+      preLoaderRoute: typeof AppSceneryImport
+      parentRoute: typeof AppImport
     }
     '/_app/settings': {
       id: '/_app/settings'
@@ -135,6 +149,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteChildren {
+  AppSceneryRoute: typeof AppSceneryRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppStatisticsRoute: typeof AppStatisticsRoute
   AppToolsRoute: typeof AppToolsRoute
@@ -144,6 +159,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppSceneryRoute: AppSceneryRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppStatisticsRoute: AppStatisticsRoute,
   AppToolsRoute: AppToolsRoute,
@@ -157,6 +173,7 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/scenery': typeof AppSceneryRoute
   '/settings': typeof AppSettingsRoute
   '/statistics': typeof AppStatisticsRoute
   '/tools': typeof AppToolsRoute
@@ -167,6 +184,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
+  '/scenery': typeof AppSceneryRoute
   '/settings': typeof AppSettingsRoute
   '/statistics': typeof AppStatisticsRoute
   '/tools': typeof AppToolsRoute
@@ -179,6 +197,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app': typeof AppRouteWithChildren
   '/onboarding': typeof OnboardingRoute
+  '/_app/scenery': typeof AppSceneryRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/statistics': typeof AppStatisticsRoute
   '/_app/tools': typeof AppToolsRoute
@@ -192,6 +211,7 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/onboarding'
+    | '/scenery'
     | '/settings'
     | '/statistics'
     | '/tools'
@@ -201,6 +221,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/onboarding'
+    | '/scenery'
     | '/settings'
     | '/statistics'
     | '/tools'
@@ -211,6 +232,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/onboarding'
+    | '/_app/scenery'
     | '/_app/settings'
     | '/_app/statistics'
     | '/_app/tools'
@@ -247,6 +269,7 @@ export const routeTree = rootRoute
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/scenery",
         "/_app/settings",
         "/_app/statistics",
         "/_app/tools",
@@ -257,6 +280,10 @@ export const routeTree = rootRoute
     },
     "/onboarding": {
       "filePath": "onboarding.tsx"
+    },
+    "/_app/scenery": {
+      "filePath": "_app/scenery.tsx",
+      "parent": "/_app"
     },
     "/_app/settings": {
       "filePath": "_app/settings.tsx",
