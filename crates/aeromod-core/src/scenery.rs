@@ -61,6 +61,8 @@ impl SceneryCache {
   }
 
   pub fn build(&mut self, settings: &AppSettings) -> Result<()> {
+    self.airports.clear();
+
     let addons = addon::get_addons(settings)?;
     for addon in addons {
       let addon_path = &settings.addons_dir.join(&addon.id);
