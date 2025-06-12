@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { AlertCircleIcon, Loader2Icon } from "lucide-react";
+import { AlertCircleIcon, Loader2Icon, RefreshCcwIcon } from "lucide-react";
 
 import { Feature, type MapBrowserEvent, Overlay } from "ol";
 import { Point } from "ol/geom";
@@ -12,7 +12,12 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import OSM from "ol/source/osm";
 
-import { useGetSceneryCache } from "@/features/scenery/hooks";
+import { Button } from "@aeromod/ui/components/button";
+import { Hint } from "@/components/hint";
+import {
+  useGetSceneryCache,
+  useRebuildSceneryCache,
+} from "@/features/scenery/hooks";
 import type { SceneryAirport } from "@/features/scenery/types";
 
 import "ol/ol.css";
@@ -34,7 +39,13 @@ function Scenery() {
     data: scenery,
     isPending: isPendingScenery,
     isError: isErrorScenery,
+    refetch: refetchScenery,
   } = useGetSceneryCache();
+
+  const { mutate: rebuildScenery, isPending: isPendingRebuildScenery } =
+    useRebuildSceneryCache({
+      onSuccess: () => refetchScenery(),
+    });
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -136,8 +147,18 @@ function Scenery() {
 
   return (
     <div className="relative flex h-full flex-col gap-y-6 p-4">
-      <div className="flex w-full">
+      <div className="flex w-full items-center justify-between">
         <h1 className="text-2xl font-semibold">Scenery Map</h1>
+        <Hint label="Reload Scenery">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => rebuildScenery()}
+            disabled={isPendingRebuildScenery}
+          >
+            <RefreshCcwIcon />
+          </Button>
+        </Hint>
       </div>
       <div ref={containerRef} className="relative size-full">
         <div

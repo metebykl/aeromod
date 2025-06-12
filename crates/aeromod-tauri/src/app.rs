@@ -380,3 +380,17 @@ pub fn get_scenery_cache(
   let sc = scenery_cache.lock().map_err(|e| e.to_string())?;
   Ok(sc.clone())
 }
+
+#[tauri::command(async)]
+pub fn rebuild_scenery_cache(
+  scenery_cache: State<'_, SceneryCacheState>,
+  settings: State<'_, Mutex<AppSettings>>,
+) -> Result<SceneryCache, String> {
+  let settings = settings.lock().map_err(|e| e.to_string())?;
+
+  let mut sc = scenery_cache.lock().map_err(|e| e.to_string())?;
+  sc.build(&settings).map_err(|e| e.to_string())?;
+  sc.save().map_err(|e| e.to_string())?;
+
+  Ok(sc.clone())
+}
