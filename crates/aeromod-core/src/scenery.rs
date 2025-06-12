@@ -10,6 +10,8 @@ use walkdir::WalkDir;
 
 use crate::addon;
 
+const BLOCKED_CREATORS: &[&str] = &["Navigraph"];
+
 #[derive(Clone, Serialize, Deserialize)]
 pub struct SceneryCache {
   #[serde(skip)]
@@ -65,6 +67,14 @@ impl SceneryCache {
 
     let addons = addon::get_addons(settings)?;
     for addon in addons {
+      if addon.content_type != "SCENERY" {
+        continue;
+      }
+
+      if BLOCKED_CREATORS.contains(&addon.creator.as_str()) {
+        continue;
+      }
+
       let addon_path = &settings.addons_dir.join(&addon.id);
       for entry in WalkDir::new(addon_path)
         .into_iter()
