@@ -22,6 +22,8 @@ Microsoft Flight Simulator that lets you manager your addons effortlessly.
 - 🛠️ **Verify Addon Files** – Check for missing or corrupted files to ensure addon integrity.
 - 🔍 **Search Addons** – Quickly find the addon you're looking for.
 - 🧩 **View Addon Details** – See important info like type, author, and version.
+- ⚙️ **Presets** – Create and manage addon presets for different flight scenarios.
+- 🗺️ **Scenery Map** – Visualize your scenery addons on a map.
 
 ## How It Works
 
